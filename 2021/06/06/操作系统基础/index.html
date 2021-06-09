@@ -6,31 +6,20 @@
   <meta name="keywords" content="">
   <meta name="description" content="操作系统基础 | WohCoOs">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<meta name="description" content="Linux基础系统命令1.pwd #(now place)2.cd .. #返回上一级3.cd + path #to path4.cd - #previous path5.ls+path #查看某文件夹下的内容6.ls -l #more info7.ls -lR #everydircontent and info8.mkdir #make file9.touch #建立文档10.rm #del11">
+<meta name="description" content="WEB CTFPHP弱类型php是一种弱类型语言，对数据的类型要求并不严格，可以让数据类型互相转换。在php中有两种比较符号: &#x3D;&#x3D;和&#x3D;&#x3D;&#x3D;  &#x3D;&#x3D; ：弱等于。在比较前会先把两种字符串类型转成相同的再进行比较。它不会比较变量类型，只比较值。 &#x3D;&#x3D;&#x3D; ：强等于。在比较前会先判断两种字符串类型是否相同再进行比较，如果类型不同直接返回不相等。既比较值也比较类型。  PHP转换规则 若一个数字和一个字符串">
 <meta property="og:type" content="article">
-<meta property="og:title" content="操作系统基础">
-<meta property="og:url" content="https://szszzszs13.github.io/2021/06/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/index.html">
+<meta property="og:title" content="PHP CTF练习">
+<meta property="og:url" content="https://szszzszs13.github.io/2021/06/09/PHP-CTF%E7%BB%83%E4%B9%A0/index.html">
 <meta property="og:site_name" content="WohCoOs">
-<meta property="og:description" content="Linux基础系统命令1.pwd #(now place)2.cd .. #返回上一级3.cd + path #to path4.cd - #previous path5.ls+path #查看某文件夹下的内容6.ls -l #more info7.ls -lR #everydircontent and info8.mkdir #make file9.touch #建立文档10.rm #del11">
+<meta property="og:description" content="WEB CTFPHP弱类型php是一种弱类型语言，对数据的类型要求并不严格，可以让数据类型互相转换。在php中有两种比较符号: &#x3D;&#x3D;和&#x3D;&#x3D;&#x3D;  &#x3D;&#x3D; ：弱等于。在比较前会先把两种字符串类型转成相同的再进行比较。它不会比较变量类型，只比较值。 &#x3D;&#x3D;&#x3D; ：强等于。在比较前会先判断两种字符串类型是否相同再进行比较，如果类型不同直接返回不相等。既比较值也比较类型。  PHP转换规则 若一个数字和一个字符串">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://pic3.zhimg.com/80/v2-212ca855ac2dad87983b23b6539e21ce_1440w.jpg">
-<meta property="og:image" content="https://pic3.zhimg.com/v2-b92499b17ed11bc279689ecdb6efb4b6_b.jpg">
-<meta property="og:image" content="https://pic2.zhimg.com/v2-9d77e25913894df26b0374ceae25c605_b.jpg">
-<meta property="og:image" content="https://pic2.zhimg.com/v2-d9e36f97b24b2a7f760a81d0b095c36d_b.jpg">
-<meta property="og:image" content="https://pic3.zhimg.com/80/v2-b90ccc05d3a17b7bf30e4528faf96f4a_1440w.jpg">
-<meta property="og:image" content="https://pic2.zhimg.com/80/v2-151011877000bb57b29c0c86576a5691_1440w.jpg">
-<meta property="og:image" content="https://pic2.zhimg.com/80/v2-c6d908835871f938fe71c783b4cc8e01_1440w.jpg">
-<meta property="og:image" content="https://img-blog.csdnimg.cn/20190309112559820.png">
-<meta property="og:image" content="https://img-blog.csdnimg.cn/20190327075949591.png">
-<meta property="og:image" content="https://szszzszs13.github.io/2021/06/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/1.jpg">
-<meta property="og:image" content="https://img.linux.net.cn/data/attachment/album/201807/02/094428ko2tc8saplc2apto.png">
-<meta property="og:image" content="https://pic1.zhimg.com/v2-a2f876631161fca1f52d5ae9910a18dc_b.jpg">
-<meta property="og:image" content="https://szszzszs13.github.io/2021/06/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80/1.png">
-<meta property="article:published_time" content="2021-06-06T12:26:23.000Z">
-<meta property="article:modified_time" content="2021-06-06T13:39:37.553Z">
+<meta property="og:image" content="https://szszzszs13.github.io/2021/06/09/PHP-CTF%E7%BB%83%E4%B9%A0/1.png">
+<meta property="og:image" content="https://szszzszs13.github.io/2021/06/09/PHP-CTF%E7%BB%83%E4%B9%A0/2.png">
+<meta property="article:published_time" content="2021-06-09T14:37:09.000Z">
+<meta property="article:modified_time" content="2021-06-09T15:31:33.440Z">
 <meta property="article:author" content="WohCoOs">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://pic3.zhimg.com/80/v2-212ca855ac2dad87983b23b6539e21ce_1440w.jpg">
+<meta name="twitter:image" content="https://szszzszs13.github.io/2021/06/09/PHP-CTF%E7%BB%83%E4%B9%A0/1.png">
 
 
 <link rel="icon" href="/img/kudo.jpg">
@@ -116,7 +105,7 @@
     <li>
         <div class="all active" data-rel="全部文章">全部文章
             
-                <small>(2)</small>
+                <small>(3)</small>
             
         </div>
     </li>
@@ -134,8 +123,8 @@
         
     </div>
 </div>
-<input type="hidden" id="yelog_site_posts_number" value="2">
-<input type="hidden" id="yelog_site_word_count" value="4.5k">
+<input type="hidden" id="yelog_site_posts_number" value="3">
+<input type="hidden" id="yelog_site_word_count" value="5.4k">
 <div style="display: none">
     <span id="busuanzi_value_site_uv"></span>
     <span id="busuanzi_value_site_pv"></span>
@@ -188,6 +177,14 @@
     </div>
     
     <nav id="title-list-nav">
+        
+        <a  class="全部文章 "
+           href="/2021/06/09/PHP-CTF%E7%BB%83%E4%B9%A0/"
+           data-tag=""
+           data-author="" >
+            <span class="post-title" title="PHP CTF练习">PHP CTF练习</span>
+            <span class="post-date" title="2021-06-09 22:37:09">2021/06/09</span>
+        </a>
         
         <a  class="全部文章 "
            href="/2021/06/08/PHP%E5%9F%BA%E7%A1%80/"
