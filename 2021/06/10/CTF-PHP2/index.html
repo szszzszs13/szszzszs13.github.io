@@ -2,9 +2,9 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>CTF-PHP | WohCoOs</title>
+  <title>CTF-PHP2 | WohCoOs</title>
   <meta name="keywords" content="">
-  <meta name="description" content="CTF-PHP | WohCoOs">
+  <meta name="description" content="CTF-PHP2 | WohCoOs">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="description" content="题目 flag In the variable ! &lt;?php    error_reporting(0); include &quot;flag1.php&quot;; highlight_file(__file__); if(isset($_GET[&#39;args&#39;]))&amp;#123;     $args &#x3D; $_GET[&#39;args&#39;];     if(!pre">
 <meta property="og:type" content="article">
@@ -229,9 +229,9 @@
 </aside>
 <div id="post">
     <div class="pjax">
-        <article id="post-CTF-PHP" class="article article-type-post" itemscope itemprop="blogPost">
+        <article id="post-CTF-PHP2" class="article article-type-post" itemscope itemprop="blogPost">
     
-        <h1 class="article-title">CTF-PHP</h1>
+        <h1 class="article-title">CTF-PHP2</h1>
     
     <div class="article-meta">
         
@@ -241,12 +241,12 @@
     </div>
     <div class="article-meta">
         
-            发布时间 : <time class="date" title='最后更新: 2021-06-11 11:08:18'>2021-06-10 08:31</time>
+            发布时间 : <time class="date" title='最后更新: 2021-06-10 18:52:31'>2021-06-10 12:54</time>
         
     </div>
     <div class="article-meta">
         
-        <span>字数:923</span>
+        <span>字数:516</span>
         
         
         <span id="busuanzi_container_page_pv">
@@ -265,7 +265,7 @@
     
     <div class="toc-ref">
     
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#PHP%E5%BC%B1%E7%B1%BB%E5%9E%8B"><span class="toc-text">PHP弱类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PHP%E8%BD%AC%E6%8D%A2%E8%A7%84%E5%88%99"><span class="toc-text">PHP转换规则</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE"><span class="toc-text">题目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%81%E7%A8%8B"><span class="toc-text">流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PHP%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB"><span class="toc-text">PHP文件包含</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE-1"><span class="toc-text">题目</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%9F%A5%E7%9C%8Bflag-php%E6%96%87%E4%BB%B6"><span class="toc-text">如何查看flag.php文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%A7%E4%BD%93%E6%B5%81%E7%A8%8B"><span class="toc-text">大体流程</span></a></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE"><span class="toc-text">题目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF"><span class="toc-text">解题思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96flag"><span class="toc-text">获取flag</span></a></li></ol>
     
 <style>
     .left-col .switch-btn,
@@ -281,74 +281,76 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="PHP弱类型"><a href="#PHP弱类型" class="headerlink" title="PHP弱类型"></a>PHP弱类型</h2><p><strong>php是一种弱类型语言，对数据的类型要求并不严格，可以让数据类型互相转换。</strong><br>在php中有两种比较符号: <code>==</code>和<code>===</code></p>
-<ul>
-<li>== ：弱等于。在比较前会先把两种<strong>字符串类型转成相同</strong>的再进行比较。它不会比较<strong>变量类型</strong>，只比较值。</li>
-<li>=== ：强等于。在比较前会<strong>先判断两种字符串类型是否相同</strong>再进行比较，如果类型不同直接返回不相等。<strong>既比较值也比较类型</strong>。</li>
-</ul>
-<h2 id="PHP转换规则"><a href="#PHP转换规则" class="headerlink" title="PHP转换规则"></a>PHP转换规则</h2><ul>
-<li>若一个数字和一个字符串进行比较或者进行运算时，PHP会把字符串转换成数字再进行比较</li>
-<li>若字符串以数字开头，则取开头数字作为转换结果，不能转换为数字的字符串或null，则转换为0</li>
-<li>eg:”admin”是不能转换为数字的字符串，而”123”或”123aa”就是可以转换为数字的字符串）</li>
-<li>布尔值true和任意字符串都弱相等</li>
-</ul>
-<ul>
-<li><pre><code class="php">var_dump(12==&quot;12&quot;)                                   //true
-var_dump(12==&quot;12aa&quot;)                               //true
-var_dump( &quot;admin&quot;==0)                               //true
-var_dump(false==&quot;&quot;==0==NULL)                        //true
-var_dump(true==&quot;hyuf&quot;)                              //true
-</code></pre>
-</li>
-</ul>
-<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><ul>
-<li><pre><code class="php">$num=$_GET[&#39;num&#39;];
-if(!is_numeric($num))
-&#123;
-echo $num;
-if($num==1)
-echo &#39;flag&#123;******&#125;&#39;;
-&#125; 
-</code></pre>
-</li>
-</ul>
-<h2 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h2><p>使用$定义一个变量<code>$num</code><br><code>is_numeric()</code> 函数用于检测变量是否为数字或数字字符串，如果指定的变量是数字和数字字符串则返回 TRUE，否则返回 FALSE，注意浮点型返回空值，即 FALSE<br>flag在第二个条件中<br>在第一个if语句，如果输入为数字，则打印输入的数字，不打印flag<br>所以我们要执行第二个if语句，所以不能单纯输入数字，否则会执行第一个if语句<br>为满足判断条件2，根据上述转换规则，输入的数字为1+非数字字符则满足判断条件2打印出flag</p>
-<p><img src="/2021/06/10/CTF-PHP/1.png" alt="writeup"></p>
-<h2 id="PHP文件包含"><a href="#PHP文件包含" class="headerlink" title="PHP文件包含"></a>PHP文件包含</h2><ul>
-<li>web 应用采用 include()、include_once()、require()、require_once()等文件包含函数，并且需要包含的文件路径是通过<strong>用户传输参数</strong>的方式引入；</li>
-<li>用户能够<strong>控制</strong>包含文件的<strong>参数</strong>，被包含的文件可被当前页面访问；</li>
-</ul>
-<h2 id="题目-1"><a href="#题目-1" class="headerlink" title="题目"></a>题目</h2><ul>
-<li><pre><code class="php">&lt;?php
-       include &quot;flag.php&quot;;
-       $a = @$_REQUEST[&#39;hello&#39;];
-       eval( &quot;var_dump($a);&quot;);
-       show_source(__FILE__);
-?&gt; 
+        <h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><ul>
+<li><pre><code class="php">flag In the variable ! &lt;?php  
 
+error_reporting(0);
+include &quot;flag1.php&quot;;
+highlight_file(__file__);
+if(isset($_GET[&#39;args&#39;]))&#123;
+    $args = $_GET[&#39;args&#39;];
+    if(!preg_match(&quot;/^\w+$/&quot;,$args))&#123;
+        die(&quot;args error!&quot;);
+    &#125;
+    eval(&quot;var_dump($$args);&quot;);
+&#125;
+?&gt;
 </code></pre>
 </li>
 </ul>
 <ul>
-<li><p><code>Include（）</code>：包含并运行指定的文件，只有在程序执行到include时才包含文件，且当包含文件发生错误时，程序警告，但会继续执行。此时包含文件为flag.php</p>
+<li><p><code>error_reporting(0)</code>关闭错误报告</p>
 </li>
-<li><p><code>$_REQUEST[&quot;参数&quot;]</code>，此时参数为hello，此时用于提供给用户输入</p>
+<li><p><code>include</code>文件包含，此时包含文件flag1.php</p>
 </li>
-<li><p><code>eval() </code>函数可将字符串转换为代码执行，并返回一个或多个值，此时用于执行我们想要的命令</p>
+<li><p><code>highlight_file(__file__);</code>高亮代码，没啥用</p>
 </li>
-<li><p><code>var_dump()</code>的功能是输出变量的信息，此时用于将运行结果输出给我们看</p>
+<li><p><code>isset</code>判断<code>args</code>参数是否存在，存在则将用户的输入赋值给它</p>
 </li>
-<li><p><code>show_source()</code>函数，可以使用<code>show_source(&#39;flag.php&#39;)</code>直接查看<code>flag.php</code>页面</p>
-<h3 id="如何查看flag-php文件"><a href="#如何查看flag-php文件" class="headerlink" title="如何查看flag.php文件"></a>如何查看flag.php文件</h3><p>通过Linux的系统命令<code>cat flag.php</code>查看文件<br>通过php函数<code>show_source()</code>函数直接查看</p>
-<h3 id="大体流程"><a href="#大体流程" class="headerlink" title="大体流程"></a>大体流程</h3><ul>
-<li>使用php函数→用户输入→php函数转换→执行操作系统命令→获取flag</li>
-<li>php函数直接查看flag</li>
+<li><p><code>preg_match</code>匹配正则表达式，/^（开始）, \w表示任意一个单词字符，即[a-z,A-Z,0-9_] ,+将前面的字符匹配一次或多次，$/（结尾）。此时如果用户输入超出这里的范围，如输入符号是不被允许的</p>
+</li>
+<li><p><code>die()</code> 函数输出一条消息，并退出当前脚本。此时如果用户输入不满足第二个if的正则表达式，则输出<code>args error!</code></p>
+</li>
+<li><p><strong><code>flag In the variable !</code>提示flag在变量中</strong></p>
+</li>
+<li><p>两个$$即把<code>args</code>设置为可变变量。</p>
+<ul>
+<li><img src="/2021/06/10/CTF-PHP2/4.jpg" alt="可变变量介绍" style="zoom:50%;">
+</li>
 </ul>
-<p>本题定义了一个变量<code>$a</code>，以及赋一个用户可控的参数<code>hello</code>给$a,我们利用可控参数hello找到我们的flag,传值过程(hello→a→eval）<code>eval</code>函数将用户的输入转化为代码执行（执行系统命令）从而通过执行系统命令查看我们的flag.php文件</p>
-<p>因为已知页面有<code>show_source()</code>函数，可以使用<code>show_source(&#39;flag.php&#39;)</code>直接查看<code>flag.php</code>页面</p>
-<p><img src="/2021/06/10/CTF-PHP/2.png" alt="writeup"></p>
+</li>
+<li><p><code>eval</code>把括号里的内容当作代码执行</p>
 </li>
 </ul>
+<h2 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h2><ol>
+<li>利用文件包含打印出flag</li>
+<li>利用题目的提示<code>flag In the variable</code>获取flag</li>
+</ol>
+<h2 id="获取flag"><a href="#获取flag" class="headerlink" title="获取flag"></a>获取flag</h2><ol>
+<li><p>采用思路一，行不通。正则判断条件不允许出现<code>.()</code>等特殊符号，因为不满足正则条件，所以输入<code>flag.php</code>会直接返回<code>args error!</code>,所以无法通过执行system（cat flag1.php）等系统命令查看flag1.php</p>
+<ul>
+<li><img src="/2021/06/10/CTF-PHP2/2.jpg" alt="返回error" style="zoom: 67%;">
+</li>
+<li><p>如果输入满足正则条件，是下面的结果，但无法和思路一结合起来</p>
+</li>
+<li><img src="/2021/06/10/CTF-PHP2/3.jpg" alt="返回null" style="zoom:67%;">
+</li>
+</ul>
+</li>
+<li><p>结合题目提示，利用可变变量，把所有的变量都打印出来即可获得flag</p>
+<ul>
+<li>题目里面除了<code>args</code>以及没有第二个变量，所以我们要使用默认存在的全局变量``$GLOBALS<code>获得所有变量即获得flag，PHP 在名为 </code>$GLOBALS[index] `的数组中存储了所有全局变量。</li>
+</ul>
+</li>
+<li><p><code>args=GLOBALS</code>正好符合条件利用可变变量输出，最后得到flag。</p>
+</li>
+<li><p>执行流程</p>
+<ol>
+<li>用户输入<code>args=GLOBALS</code>,根据第七行把<code>GLOBALS</code> 赋给<code>$args</code>，满足第八行的判断，跳到<code>evel</code>执行<code>var_dump($GLOBALS);  </code></li>
+</ol>
+<p><img src="/2021/06/10/CTF-PHP2/1.jpg" alt="writeup"></p>
+</li>
+</ol>
 
       
        <hr><span style="font-style: italic;color: gray;"> 转载请注明来源，欢迎对文章中的引用来源进行考证，欢迎指出任何有错误或不够清晰的表达。可以在下面评论区评论，也可以邮件至1694933467@qq.com </span>
