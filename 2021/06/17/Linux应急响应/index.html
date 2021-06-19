@@ -2,9 +2,9 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>CTF-PHP2 | WohCoOs</title>
+  <title>Linux应急响应 | WohCoOs</title>
   <meta name="keywords" content="">
-  <meta name="description" content="CTF-PHP2 | WohCoOs">
+  <meta name="description" content="Linux应急响应 | WohCoOs">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="description" content="常规检测流程查杀病毒进程 1.discover  根据进程discover 根据进程的cpu和内存情况找到病毒 ps aux|head -1;ps aux|sort -rn -k +3|head cpu占用最多的10个进程 ps aux|head -1;ps aux|sort -rn -k +4|head 内存占用最多的10个进程   top动态查看进程，包含cpu，内存占用等信息 ps aux静">
 <meta property="og:type" content="article">
@@ -246,9 +246,9 @@
 </aside>
 <div id="post">
     <div class="pjax">
-        <article id="post-CTF-PHP2" class="article article-type-post" itemscope itemprop="blogPost">
+        <article id="post-Linux应急响应" class="article article-type-post" itemscope itemprop="blogPost">
     
-        <h1 class="article-title">CTF-PHP2</h1>
+        <h1 class="article-title">Linux应急响应</h1>
     
     <div class="article-meta">
         
@@ -258,12 +258,12 @@
     </div>
     <div class="article-meta">
         
-            发布时间 : <time class="date" title='最后更新: 2021-06-10 18:52:31'>2021-06-10 12:54</time>
+            发布时间 : <time class="date" title='最后更新: 2021-06-20 01:52:16'>2021-06-17 01:27</time>
         
     </div>
     <div class="article-meta">
         
-        <span>字数:516</span>
+        <span>字数:656</span>
         
         
         <span id="busuanzi_container_page_pv">
@@ -282,7 +282,7 @@
     
     <div class="toc-ref">
     
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE"><span class="toc-text">题目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF"><span class="toc-text">解题思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96flag"><span class="toc-text">获取flag</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B8%B8%E8%A7%84%E6%A3%80%E6%B5%8B%E6%B5%81%E7%A8%8B"><span class="toc-text">常规检测流程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9F%A5%E6%9D%80%E7%97%85%E6%AF%92%E8%BF%9B%E7%A8%8B"><span class="toc-text">查杀病毒进程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E5%A8%81%E8%83%81%E6%98%AF%E5%90%A6%E5%AE%8C%E5%85%A8%E6%B8%85%E9%99%A4"><span class="toc-text">查看威胁是否完全清除</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1"><span class="toc-text">定时任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E5%90%AF%E5%8A%A8%E9%A1%B9%E5%92%8C%E6%9C%8D%E5%8A%A1"><span class="toc-text">自启动项和服务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8%E6%88%B7%E5%AE%89%E5%85%A8%E6%80%A7%E6%8E%92%E6%9F%A5"><span class="toc-text">用户安全性排查</span></a></li></ol></li></ol></li></ol>
     
 <style>
     .left-col .switch-btn,
@@ -298,76 +298,96 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><ul>
-<li><pre><code class="php">flag In the variable ! &lt;?php  
+        <h1 id="常规检测流程"><a href="#常规检测流程" class="headerlink" title="常规检测流程"></a>常规检测流程</h1><h2 id="查杀病毒进程"><a href="#查杀病毒进程" class="headerlink" title="查杀病毒进程"></a>查杀病毒进程</h2><ul>
+<li><strong>1.discover</strong> <ul>
+<li>根据进程discover<ul>
+<li>根据进程的cpu和内存情况找到病毒<ul>
+<li><code>ps aux|head -1;ps aux|sort -rn -k +3|head</code> cpu占用最多的10个进程</li>
+<li><code>ps aux|head -1;ps aux|sort -rn -k +4|head</code> 内存占用最多的10个进程</li>
+</ul>
+</li>
+<li><code>top</code>动态查看进程，包含cpu，内存占用等信息</li>
+<li><code>ps aux</code>静态查看进程</li>
+<li><code>ps -ef</code>静态查看进程，信息量较少</li>
+</ul>
+</li>
+<li>根据网络连接discover<ul>
+<li><code>netstat -antlp | grep EST</code>查看已建立连接，检查是否存在异常外联进程。<ul>
+<li><img src="/2021/06/17/Linux%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/1.png" alt="暂未发现连接外部服务器"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>2.kill</strong><ul>
+<li><code>netstat -anltp | grep 68670</code>查看该进程网络连接情况</li>
+<li><code>kill 9  pid</code>//9代表快速停止</li>
+</ul>
+</li>
+<li><strong>3.delete</strong><ul>
+<li><code>ls -la /proc/$pid/exe</code></li>
+<li><code>lsof -p $pid</code>查看病毒进程都打开了哪些文件，方便彻底清除</li>
+</ul>
+</li>
+</ul>
+<h2 id="查看威胁是否完全清除"><a href="#查看威胁是否完全清除" class="headerlink" title="查看威胁是否完全清除"></a>查看威胁是否完全清除</h2><p>​    黑客可能会通过各种手段再次远程下载病毒运行</p>
+<h3 id="定时任务"><a href="#定时任务" class="headerlink" title="定时任务"></a>定时任务</h3><p>定时任务（即定时启动程序的任务）可以帮助入侵者运行痕迹清理脚本或者持久控制</p>
+<ul>
+<li>添加一个定时任务<code>vim /etc/crontab</code></li>
+<li>添加内容：<code>*/1 * * * * root ./root/Desktop/1</code> //<code>*</code>代表秒分时年月日，root权限，执行文件1，即每隔一分钟运行一次程序1<ul>
+<li><img src="/2021/06/17/Linux%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/3.png" alt="定时任务"></li>
+</ul>
+</li>
+<li><code>tail /var/log/cron</code> //查看异常定时任务日志</li>
+<li><code>crontab -l</code>查看计划任务是否有恶意脚本或者恶意命令</li>
+</ul>
+<h3 id="自启动项和服务"><a href="#自启动项和服务" class="headerlink" title="自启动项和服务"></a>自启动项和服务</h3><p>查看是否存在开机启动的病毒</p>
+<ul>
+<li><code>cat /etc/rc.local</code>查看是否有异常开机启动项</li>
+</ul>
+<h3 id="用户安全性排查"><a href="#用户安全性排查" class="headerlink" title="用户安全性排查"></a>用户安全性排查</h3><p>查看黑客有没有创建后门</p>
+<ul>
+<li><p><code>w</code>命令可以显示当前用户登录在线情况</p>
+</li>
+<li><p><code>cat /etc/passwd | grep bash</code>//查看当前系统可被登录的账号</p>
+</li>
+<li><p><code>grep &quot;Accepted &quot; /var/log/secure* | awk &#39;&#123;print $1,$2,$3,$9,$11&#125;&#39;</code>查看登陆用户和他的ip</p>
+</li>
+<li><p><code>last</code>命令可以查看系统每次登录的账号、ip、登录时间、持续时间</p>
+<ul>
+<li><img src="/2021/06/17/Linux%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/8.png" alt="每次登录的" style="zoom: 80%;">
+</li>
+</ul>
+</li>
+<li><p><code>lastlog</code>命令可以查看账号的最近一次登录时间</p>
+<ul>
+<li><img src="/2021/06/17/Linux%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/6.png" alt="最近一次登录" style="zoom:80%;">
+</li>
+</ul>
+</li>
+<li><p>攻击用户排查</p>
+<ul>
+<li><code>grep &quot;Failed password for root&quot; /var/log/secure | awk &#39;&#123;print $11&#125;&#39; | sort</code>爆破root的恶意ip</li>
+<li><code>grep refused /var/log/secure* | awk &#123;&#39;print $9&#39;&#125; | sort | uniq -c |sort -nr | moregrep &quot;Failed password&quot; /var/log/secure* | grep -E -o &quot;(([0-9]&#123;1,3&#125;)\.([0-9]&#123;1,3&#125;)\.([0-9]&#123;1,3&#125;)\.([0-9]&#123;1,3&#125;))&quot; | uniq -c </code>查看试图爆破的ip</li>
+</ul>
+</li>
+<li><p>用户登陆方式排查</p>
+<p>对其来路进行封堵</p>
+<ul>
+<li><code>cat /var/log/secure* | grep Accepted</code>//查看登陆成功的记录，下图出现的是ssh2说明是通过ssh爆破登陆的<ul>
+<li><img src="/2021/06/17/Linux%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/7.png" alt="ssh服务" style="zoom: 150%;">
 
-error_reporting(0);
-include &quot;flag1.php&quot;;
-highlight_file(__file__);
-if(isset($_GET[&#39;args&#39;]))&#123;
-    $args = $_GET[&#39;args&#39;];
-    if(!preg_match(&quot;/^\w+$/&quot;,$args))&#123;
-        die(&quot;args error!&quot;);
-    &#125;
-    eval(&quot;var_dump($$args);&quot;);
-&#125;
-?&gt;
-</code></pre>
-</li>
-</ul>
-<ul>
-<li><p><code>error_reporting(0)</code>关闭错误报告</p>
-</li>
-<li><p><code>include</code>文件包含，此时包含文件flag1.php</p>
-</li>
-<li><p><code>highlight_file(__file__);</code>高亮代码，没啥用</p>
-</li>
-<li><p><code>isset</code>判断<code>args</code>参数是否存在，存在则将用户的输入赋值给它</p>
-</li>
-<li><p><code>preg_match</code>匹配正则表达式，/^（开始）, \w表示任意一个单词字符，即[a-z,A-Z,0-9_] ,+将前面的字符匹配一次或多次，$/（结尾）。此时如果用户输入超出这里的范围，如输入符号是不被允许的</p>
-</li>
-<li><p><code>die()</code> 函数输出一条消息，并退出当前脚本。此时如果用户输入不满足第二个if的正则表达式，则输出<code>args error!</code></p>
-</li>
-<li><p><strong><code>flag In the variable !</code>提示flag在变量中</strong></p>
-</li>
-<li><p>两个$$即把<code>args</code>设置为可变变量。</p>
-<ul>
-<li><img src="/2021/06/10/CTF-PHP2/4.jpg" alt="可变变量介绍" style="zoom:50%;">
+
+
+
+
 </li>
 </ul>
 </li>
-<li><p><code>eval</code>把括号里的内容当作代码执行</p>
-</li>
-</ul>
-<h2 id="解题思路"><a href="#解题思路" class="headerlink" title="解题思路"></a>解题思路</h2><ol>
-<li>利用文件包含打印出flag</li>
-<li>利用题目的提示<code>flag In the variable</code>获取flag</li>
-</ol>
-<h2 id="获取flag"><a href="#获取flag" class="headerlink" title="获取flag"></a>获取flag</h2><ol>
-<li><p>采用思路一，行不通。正则判断条件不允许出现<code>.()</code>等特殊符号，因为不满足正则条件，所以输入<code>flag.php</code>会直接返回<code>args error!</code>,所以无法通过执行system（cat flag1.php）等系统命令查看flag1.php</p>
-<ul>
-<li><img src="/2021/06/10/CTF-PHP2/2.jpg" alt="返回error" style="zoom: 67%;">
-</li>
-<li><p>如果输入满足正则条件，是下面的结果，但无法和思路一结合起来</p>
-</li>
-<li><img src="/2021/06/10/CTF-PHP2/3.jpg" alt="返回null" style="zoom:67%;">
-</li>
 </ul>
 </li>
-<li><p>结合题目提示，利用可变变量，把所有的变量都打印出来即可获得flag</p>
-<ul>
-<li>题目里面除了<code>args</code>以及没有第二个变量，所以我们要使用默认存在的全局变量``$GLOBALS<code>获得所有变量即获得flag，PHP 在名为 </code>$GLOBALS[index] `的数组中存储了所有全局变量。</li>
 </ul>
-</li>
-<li><p><code>args=GLOBALS</code>正好符合条件利用可变变量输出，最后得到flag。</p>
-</li>
-<li><p>执行流程</p>
-<ol>
-<li>用户输入<code>args=GLOBALS</code>,根据第七行把<code>GLOBALS</code> 赋给<code>$args</code>，满足第八行的判断，跳到<code>evel</code>执行<code>var_dump($GLOBALS);  </code></li>
-</ol>
-<p><img src="/2021/06/10/CTF-PHP2/1.jpg" alt="writeup"></p>
-</li>
-</ol>
 
       
        <hr><span style="font-style: italic;color: gray;"> 转载请注明来源，欢迎对文章中的引用来源进行考证，欢迎指出任何有错误或不够清晰的表达。可以在下面评论区评论，也可以邮件至1694933467@qq.com </span>

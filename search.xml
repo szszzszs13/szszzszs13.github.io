@@ -4,6 +4,19 @@
   
     
     <entry>
+      <title>Linux应急响应</title>
+      <link href="2021/06/17/Linux%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/"/>
+      <url>2021/06/17/Linux%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/</url>
+      
+        <content type="html"><![CDATA[<h1 id="常规检测流程"><a href="#常规检测流程" class="headerlink" title="常规检测流程"></a>常规检测流程</h1><h2 id="查杀病毒进程"><a href="#查杀病毒进程" class="headerlink" title="查杀病毒进程"></a>查杀病毒进程</h2><ul><li><strong>1.discover</strong> <ul><li>根据进程discover<ul><li>根据进程的cpu和内存情况找到病毒<ul><li><code>ps aux|head -1;ps aux|sort -rn -k +3|head</code> cpu占用最多的10个进程</li><li><code>ps aux|head -1;ps aux|sort -rn -k +4|head</code> 内存占用最多的10个进程</li></ul></li><li><code>top</code>动态查看进程，包含cpu，内存占用等信息</li><li><code>ps aux</code>静态查看进程</li><li><code>ps -ef</code>静态查看进程，信息量较少</li></ul></li><li>根据网络连接discover<ul><li><code>netstat -antlp | grep EST</code>查看已建立连接，检查是否存在异常外联进程。<ul><li><img src="/2021/06/17/Linux%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/1.png" alt="暂未发现连接外部服务器"></li></ul></li></ul></li></ul></li><li><strong>2.kill</strong><ul><li><code>netstat -anltp | grep 68670</code>查看该进程网络连接情况</li><li><code>kill 9  pid</code>//9代表快速停止</li></ul></li><li><strong>3.delete</strong><ul><li><code>ls -la /proc/$pid/exe</code></li><li><code>lsof -p $pid</code>查看病毒进程都打开了哪些文件，方便彻底清除</li></ul></li></ul><h2 id="查看威胁是否完全清除"><a href="#查看威胁是否完全清除" class="headerlink" title="查看威胁是否完全清除"></a>查看威胁是否完全清除</h2><p>​    黑客可能会通过各种手段再次远程下载病毒运行</p><h3 id="定时任务"><a href="#定时任务" class="headerlink" title="定时任务"></a>定时任务</h3><p>定时任务（即定时启动程序的任务）可以帮助入侵者运行痕迹清理脚本或者持久控制</p><ul><li>添加一个定时任务<code>vim /etc/crontab</code></li><li>添加内容：<code>*/1 * * * * root ./root/Desktop/1</code> //<code>*</code>代表秒分时年月日，root权限，执行文件1，即每隔一分钟运行一次程序1<ul><li><img src="/2021/06/17/Linux%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/3.png" alt="定时任务"></li></ul></li><li><code>tail /var/log/cron</code> //查看异常定时任务日志</li><li><code>crontab -l</code>查看计划任务是否有恶意脚本或者恶意命令</li></ul><h3 id="自启动项和服务"><a href="#自启动项和服务" class="headerlink" title="自启动项和服务"></a>自启动项和服务</h3><p>查看是否存在开机启动的病毒</p><ul><li><code>cat /etc/rc.local</code>查看是否有异常开机启动项</li></ul><h3 id="用户安全性排查"><a href="#用户安全性排查" class="headerlink" title="用户安全性排查"></a>用户安全性排查</h3><p>查看黑客有没有创建后门</p><ul><li><p><code>w</code>命令可以显示当前用户登录在线情况</p></li><li><p><code>cat /etc/passwd | grep bash</code>//查看当前系统可被登录的账号</p></li><li><p><code>grep &quot;Accepted &quot; /var/log/secure* | awk &#39;&#123;print $1,$2,$3,$9,$11&#125;&#39;</code>查看登陆用户和他的ip</p></li><li><p><code>last</code>命令可以查看系统每次登录的账号、ip、登录时间、持续时间</p><ul><li><img src="/2021/06/17/Linux%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/8.png" alt="每次登录的" style="zoom: 80%;"></li></ul></li><li><p><code>lastlog</code>命令可以查看账号的最近一次登录时间</p><ul><li><img src="/2021/06/17/Linux%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/6.png" alt="最近一次登录" style="zoom:80%;"></li></ul></li><li><p>攻击用户排查</p><ul><li><code>grep &quot;Failed password for root&quot; /var/log/secure | awk &#39;&#123;print $11&#125;&#39; | sort</code>爆破root的恶意ip</li><li><code>grep refused /var/log/secure* | awk &#123;&#39;print $9&#39;&#125; | sort | uniq -c |sort -nr | moregrep &quot;Failed password&quot; /var/log/secure* | grep -E -o &quot;(([0-9]&#123;1,3&#125;)\.([0-9]&#123;1,3&#125;)\.([0-9]&#123;1,3&#125;)\.([0-9]&#123;1,3&#125;))&quot; | uniq -c </code>查看试图爆破的ip</li></ul></li><li><p>用户登陆方式排查</p><p>对其来路进行封堵</p><ul><li><code>cat /var/log/secure* | grep Accepted</code>//查看登陆成功的记录，下图出现的是ssh2说明是通过ssh爆破登陆的<ul><li><img src="/2021/06/17/Linux%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/7.png" alt="ssh服务" style="zoom: 150%;"></li></ul></li></ul></li></ul>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>后渗透1%</title>
       <link href="2021/06/16/%E5%90%8E%E6%B8%97%E9%80%8F1/"/>
       <url>2021/06/16/%E5%90%8E%E6%B8%97%E9%80%8F1/</url>
