@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>操作系统 | WohCoOs</title>
+  <meta name="keywords" content="">
+  <meta name="description" content="操作系统 | WohCoOs">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="description" content="常规检测流程查杀病毒进程 1.discover  根据进程discover 根据进程的cpu和内存情况找到病毒 ps aux|head -1;ps aux|sort -rn -k +3|head cpu占用最多的10个进程 ps aux|head -1;ps aux|sort -rn -k +4|head 内存占用最多的10个进程   top动态查看进程，包含cpu，内存占用等信息 ps aux静">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux应急响应">
+<meta property="og:url" content="https://szszzszs13.github.io/2021/06/17/Linux%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/index.html">
+<meta property="og:site_name" content="WohCoOs">
+<meta property="og:description" content="常规检测流程查杀病毒进程 1.discover  根据进程discover 根据进程的cpu和内存情况找到病毒 ps aux|head -1;ps aux|sort -rn -k +3|head cpu占用最多的10个进程 ps aux|head -1;ps aux|sort -rn -k +4|head 内存占用最多的10个进程   top动态查看进程，包含cpu，内存占用等信息 ps aux静">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://szszzszs13.github.io/2021/06/17/Linux%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/1.png">
+<meta property="og:image" content="https://szszzszs13.github.io/2021/06/17/Linux%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/3.png">
+<meta property="og:image" content="https://szszzszs13.github.io/2021/06/17/Linux%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/8.png">
+<meta property="og:image" content="https://szszzszs13.github.io/2021/06/17/Linux%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/6.png">
+<meta property="og:image" content="https://szszzszs13.github.io/2021/06/17/Linux%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/7.png">
+<meta property="article:published_time" content="2021-06-16T17:27:05.000Z">
+<meta property="article:modified_time" content="2021-06-19T17:52:16.643Z">
+<meta property="article:author" content="WohCoOs">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://szszzszs13.github.io/2021/06/17/Linux%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/1.png">
+
+
+<link rel="icon" href="/img/kudo.jpg">
+
+<link href="/css/style.css?v=1.1.0" rel="stylesheet">
+
+<link href="/css/hl_theme/atom-dark.css?v=1.1.0" rel="stylesheet">
+
+<link href="//cdn.jsdelivr.net/npm/animate.css@4.1.0/animate.min.css" rel="stylesheet">
+
+<script src="//cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+<script src="/js/titleTip.js?v=1.1.0" ></script>
+
+<script src="//cdn.jsdelivr.net/npm/highlightjs@9.16.2/highlight.pack.min.js"></script>
+<script>
+    hljs.initHighlightingOnLoad();
+</script>
+
+<script src="//cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js"></script>
+
+
+
+<script src="//cdn.jsdelivr.net/npm/jquery.cookie@1.4.1/jquery.cookie.min.js" ></script>
+
+<script src="/js/iconfont.js?v=1.1.0" ></script>
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+<div style="display: none">
+  <input class="theme_disqus_on" value="false">
+  <input class="theme_preload_comment" value="">
+  <input class="theme_blog_path" value="">
+  <input id="theme_shortcut" value="true" />
+  <input id="theme_highlight_on" value="true" />
+  <input id="theme_code_copy" value="true" />
+</div>
+
+
+
+<body>
+<aside class="nav">
+    <div class="nav-left">
+        <a href="/"
+   class="avatar_target">
+    <img class="avatar"
+         src="/img/kudo.jpg"/>
+</a>
+<div class="author">
+    <span>WohCoOs</span>
+</div>
+
+<div class="icon">
+    
+        
+            <a title="github"
+               href="https://github.com/szszzszs13"
+               target="_blank">
+                
+                    <svg class="iconfont-svg" aria-hidden="true">
+                        <use xlink:href="#icon-github"></use>
+                    </svg>
+                
+            </a>
+        
+    
+        
+            <a title="email"
+               href="mailto:1694933467@qq.com"
+               target="_blank">
+                
+                    <svg class="iconfont-svg" aria-hidden="true">
+                        <use xlink:href="#icon-email"></use>
+                    </svg>
+                
+            </a>
+        
+    
+</div>
+
+
+
+
+<ul>
+    <li>
+        <div class="all active" data-rel="全部文章">全部文章
+            
+                <small>(6)</small>
+            
+        </div>
+    </li>
+    
+</ul>
+<div class="left-bottom">
+    <div class="menus">
+        
+            
+            
+            
+    </div>
+    <div>
+        
+        
+    </div>
+</div>
+<input type="hidden" id="yelog_site_posts_number" value="6">
+<input type="hidden" id="yelog_site_word_count" value="16.8k">
+<div style="display: none">
+    <span id="busuanzi_value_site_uv"></span>
+    <span id="busuanzi_value_site_pv"></span>
+</div>
+
+    </div>
+    <div class="nav-right">
+        <div class="friends-area">
+    <div class="friends-title">
+        友情链接
+        <i class="iconfont icon-left"></i>
+    </div>
+    <div class="friends-content">
+        <ul>
+            
+        </ul>
+    </div>
+</div>
+        <div class="title-list">
+    <div class="right-top">
+        <div id="default-panel">
+            <i class="iconfont icon-search" data-title="搜索 快捷键 i"></i>
+            <div class="right-title">全部文章</div>
+            <i class="iconfont icon-file-tree" data-title="切换到大纲视图 快捷键 w"></i>
+        </div>
+        <div id="search-panel">
+            <i class="iconfont icon-left" data-title="返回"></i>
+            <input id="local-search-input" />
+            <label class="border-line" for="input"></label>
+            <i class="iconfont icon-case-sensitive" data-title="大小写敏感"></i>
+            <i class="iconfont icon-tag" data-title="标签"></i>
+        </div>
+        <div id="outline-panel" style="display: none">
+            <div class="right-title">大纲</div>
+            <i class="iconfont icon-list" data-title="切换到文章列表"></i>
+        </div>
+    </div>
+
+    <div class="tags-list">
+    <input id="tag-search" />
+    <div class="tag-wrapper">
+        
+    </div>
+
+</div>
+
+    
+    <div id="local-search-result">
+
+    </div>
+    
+    <nav id="title-list-nav">
+        
+        <a  class="全部文章 "
+           href="/2021/06/17/Linux%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/"
+           data-tag=""
+           data-author="" >
+            <span class="post-title" title="Linux应急响应">Linux应急响应</span>
+            <span class="post-date" title="2021-06-17 01:27:05">2021/06/17</span>
+        </a>
+        
+        <a  class="全部文章 "
+           href="/2021/06/16/%E5%90%8E%E6%B8%97%E9%80%8F1/"
+           data-tag=""
+           data-author="" >
+            <span class="post-title" title="后渗透1%">后渗透1%</span>
+            <span class="post-date" title="2021-06-16 23:27:41">2021/06/16</span>
+        </a>
+        
+        <a  class="全部文章 "
+           href="/2021/06/10/CTF-PHP2/"
+           data-tag=""
+           data-author="" >
+            <span class="post-title" title="CTF-PHP2">CTF-PHP2</span>
+            <span class="post-date" title="2021-06-10 12:54:12">2021/06/10</span>
+        </a>
+        
+        <a  class="全部文章 "
+           href="/2021/06/10/CTF-PHP/"
+           data-tag=""
+           data-author="" >
+            <span class="post-title" title="CTF-PHP">CTF-PHP</span>
+            <span class="post-date" title="2021-06-10 08:31:01">2021/06/10</span>
+        </a>
+        
+        <a  class="全部文章 "
+           href="/2021/06/08/PHP%E5%9F%BA%E7%A1%80/"
+           data-tag=""
+           data-author="" >
+            <span class="post-title" title="PHP基础">PHP基础</span>
+            <span class="post-date" title="2021-06-08 08:20:40">2021/06/08</span>
+        </a>
+        
+        <a  class="全部文章 "
+           href="/2021/06/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"
+           data-tag=""
+           data-author="" >
+            <span class="post-title" title="操作系统">操作系统</span>
+            <span class="post-date" title="2021-06-06 20:26:23">2021/06/06</span>
+        </a>
+        
+        <div id="no-item-tips">
+
+        </div>
+    </nav>
+    <div id="outline-list">
+    </div>
+</div>
+    </div>
+    <div class="hide-list">
+        <div class="semicircle" data-title="切换全屏 快捷键 s">
+            <div class="brackets first"><</div>
+            <div class="brackets">&gt;</div>
+        </div>
+    </div>
+</aside>
+<div id="post">
+    <div class="pjax">
+        <article id="post-操作系统" class="article article-type-post" itemscope itemprop="blogPost">
+    
+        <h1 class="article-title">操作系统</h1>
+    
+    <div class="article-meta">
+        
+        
+        
+        
+    </div>
+    <div class="article-meta">
+        
+            发布时间 : <time class="date" title='最后更新: 2021-08-24 14:34:49'>2021-06-06 20:26</time>
+        
+    </div>
+    <div class="article-meta">
+        
+        <span>字数:13.8k</span>
+        
+        
+        <span id="busuanzi_container_page_pv">
+            阅读 :<span id="busuanzi_value_page_pv">
+                <span class="count-comment">
+                    <span class="spinner">
+                      <div class="cube1"></div>
+                      <div class="cube2"></div>
+                    </span>
+                </span>
+            </span>
+        </span>
+        
+        
+    </div>
+    
+    <div class="toc-ref">
+    
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Linux%E5%9F%BA%E7%A1%80"><span class="toc-text">Linux基础</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-text">常用命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E7%9A%84%E7%B3%BB%E7%BB%9F%E5%91%BD%E4%BB%A4"><span class="toc-text">常用的系统命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#VIM%E5%91%BD%E4%BB%A4"><span class="toc-text">VIM命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Linux%E7%94%A8%E6%88%B7%E6%9D%83%E9%99%90%E5%88%92%E5%88%86%E5%91%BD%E4%BB%A4"><span class="toc-text">Linux用户权限划分命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E6%9D%83%E9%99%90%E5%91%BD%E4%BB%A4"><span class="toc-text">文件权限命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%AE%E5%BD%95%E6%9D%83%E9%99%90%E5%91%BD%E4%BB%A4"><span class="toc-text">目录权限命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%86%E7%A0%81%E6%96%87%E4%BB%B6"><span class="toc-text">密码文件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#etc-passwd"><span class="toc-text">&#x2F;etc&#x2F;passwd</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#etc-shadow"><span class="toc-text">&#x2F;etc&#x2F;shadow</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="toc-text">Linux 文件系统</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%BB%93%E6%9E%84"><span class="toc-text">Linux文件系统结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="toc-text">Linux文件系统</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Linux%E6%96%87%E4%BB%B6%E7%B1%BB%E5%9E%8B"><span class="toc-text">Linux文件类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Linux%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95"><span class="toc-text">Linux文件目录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%89%B9%E6%80%A7"><span class="toc-text">Linux文件系统特性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux%E7%9A%84%E5%BC%95%E5%AF%BC%E5%92%8C%E5%90%AF%E5%8A%A8"><span class="toc-text">Linux的引导和启动</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%95%E5%AF%BC%E8%BF%87%E7%A8%8B"><span class="toc-text">引导过程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#BIOS-%E4%B8%8A%E7%94%B5%E8%87%AA%E6%A3%80%EF%BC%88POST%EF%BC%89"><span class="toc-text">BIOS 上电自检（POST）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BC%95%E5%AF%BC%E8%A3%85%E8%BD%BD%E7%A8%8B%E5%BA%8F-GRUB2"><span class="toc-text">引导装载程序 (GRUB2)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B"><span class="toc-text">启动过程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8systemd"><span class="toc-text">启动systemd</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8%E5%AE%8C%E6%88%90%E6%A0%87%E5%BF%97"><span class="toc-text">启动完成标志</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Windows%E5%9F%BA%E7%A1%80"><span class="toc-text">Windows基础</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Windows%E5%BC%95%E5%AF%BC%E5%92%8C%E5%90%AF%E5%8A%A8"><span class="toc-text">Windows引导和启动</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%A0%E7%BB%9FBIOS-MBR"><span class="toc-text">传统BIOS + MBR</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B0%E5%9E%8BUEFI-GPT"><span class="toc-text">新型UEFI + GPT</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Windows%E7%94%A8%E6%88%B7%E7%AE%A1%E7%90%86"><span class="toc-text">Windows用户管理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AC%E5%9C%B0%E8%B4%A6%E6%88%B7%E4%B8%8E%E5%9F%9F%E8%B4%A6%E6%88%B7"><span class="toc-text">本地账户与域账户</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E5%86%85%E7%BD%AE%E7%BB%84"><span class="toc-text">常见内置组</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%B9%E6%AE%8A%E6%9C%AC%E5%9C%B0%E5%86%85%E7%BD%AE%E7%BB%84"><span class="toc-text">特殊本地内置组</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%84%E7%AE%A1%E7%90%86%E5%91%BD%E4%BB%A4"><span class="toc-text">组管理命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%85%E7%BD%AE%E8%B4%A6%E6%88%B7"><span class="toc-text">内置账户</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8%E6%88%B7%E7%AE%A1%E7%90%86%E5%91%BD%E4%BB%A4"><span class="toc-text">用户管理命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="toc-text">Windows文件系统</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="toc-text">常见的文件系统</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Windows%E6%9C%8D%E5%8A%A1"><span class="toc-text">Windows服务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Windows%E6%B3%A8%E5%86%8C%E8%A1%A8"><span class="toc-text">Windows注册表</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-text">概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%A8%E5%86%8C%E8%A1%A8%E7%9A%84%E7%BB%84%E6%88%90%E7%BB%93%E6%9E%84"><span class="toc-text">注册表的组成结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%A8%E5%86%8C%E8%A1%A8%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="toc-text">注册表基本数据类型</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Windows%E8%BF%9B%E7%A8%8B"><span class="toc-text">Windows进程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A6%82%E5%BF%B5"><span class="toc-text">概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E7%9A%84%E7%BB%84%E6%88%90"><span class="toc-text">进程的组成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E7%9A%84%E4%BA%94%E7%8A%B6%E6%80%81%E6%A8%A1%E5%9E%8B"><span class="toc-text">进程的五状态模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E7%9A%84%E4%B8%83%E7%8A%B6%E6%80%81%E6%A8%A1%E5%9E%8B"><span class="toc-text">进程的七状态模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6"><span class="toc-text">进程控制</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6%E4%BA%94%E5%A4%A7%E5%8E%9F%E8%AF%AD"><span class="toc-text">进程控制五大原语</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E9%80%9A%E4%BF%A1"><span class="toc-text">进程通信</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B1%E4%BA%AB%E5%AD%98%E5%82%A8"><span class="toc-text">共享存储</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AE%A1%E9%81%93%E9%80%9A%E4%BF%A1"><span class="toc-text">管道通信</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B6%88%E6%81%AF%E4%BC%A0%E9%80%92"><span class="toc-text">消息传递</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%89%E7%A7%8D%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F%E6%AF%94%E8%BE%83"><span class="toc-text">三种通信方式比较</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86%E5%91%BD%E4%BB%A4"><span class="toc-text">常用进程管理命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Windows%E8%AE%BE%E5%A4%87%E7%AE%A1%E7%90%86"><span class="toc-text">Windows设备管理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#i-o%E8%AE%BE%E5%A4%87%E7%9A%84%E6%8E%A7%E5%88%B6%E6%96%B9%E5%BC%8F"><span class="toc-text">i&#x2F;o设备的控制方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#i-o%E7%BC%93%E5%86%B2%E5%8C%BA"><span class="toc-text">i&#x2F;o缓冲区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E5%A4%87%E7%8B%AC%E7%AB%8B%E6%80%A7"><span class="toc-text">设备独立性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A3%81%E7%9B%98%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95"><span class="toc-text">磁盘调度算法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Windows%E6%97%A5%E5%BF%97"><span class="toc-text">Windows日志</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%A5%E5%BF%97%E7%89%B9%E7%82%B9"><span class="toc-text">日志特点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%A5%E5%BF%97%E6%9F%A5%E7%9C%8B"><span class="toc-text">日志查看</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%A5%E5%BF%97%E5%88%86%E7%B1%BB"><span class="toc-text">日志分类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%A5%E5%BF%97%E5%AE%89%E5%85%A8%E8%AE%BE%E7%BD%AE"><span class="toc-text">日志安全设置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90"><span class="toc-text">日志分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90%E5%B7%A5%E5%85%B7"><span class="toc-text">日志分析工具</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%A5%E4%BE%B5%E6%83%85%E6%99%AF%E5%88%86%E6%9E%90"><span class="toc-text">入侵情景分析</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#MAC-OS%E5%9F%BA%E7%A1%80"><span class="toc-text">MAC OS基础</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%A5%E5%BF%97%E6%96%87%E4%BB%B6"><span class="toc-text">日志文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%A5%E5%BF%97%E6%9F%A5%E7%9C%8B-1"><span class="toc-text">日志查看</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MAC%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="toc-text">MAC文件系统</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Mac%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95"><span class="toc-text">Mac文件目录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Mac%E7%89%B9%E6%9C%89%E7%9B%AE%E5%BD%95"><span class="toc-text">Mac特有目录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Mac%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%89%B9%E7%82%B9"><span class="toc-text">Mac文件系统特点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Mac%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C%E5%91%BD%E4%BB%A4"><span class="toc-text">Mac基本操作命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Mac%E7%94%A8%E6%88%B7%E7%AE%A1%E7%90%86%E5%91%BD%E4%BB%A4"><span class="toc-text">Mac用户管理命令</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%A7%BB%E5%8A%A8%E6%99%BA%E8%83%BD%E8%AE%BE%E5%A4%87%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F"><span class="toc-text">移动智能设备操作系统</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Android"><span class="toc-text">Android</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Android%E6%97%A5%E5%BF%97%E6%96%87%E4%BB%B6"><span class="toc-text">Android日志文件</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Logger%E6%97%A5%E5%BF%97%E6%A0%BC%E5%BC%8F"><span class="toc-text">Logger日志格式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90-1"><span class="toc-text">日志分析</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Android%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="toc-text">Android文件系统</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Ext4"><span class="toc-text">Ext4</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#F2FS"><span class="toc-text">F2FS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Ext4-vs-F2FS"><span class="toc-text">Ext4 vs F2FS</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C%E5%91%BD%E4%BB%A4"><span class="toc-text">基本操作命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IOS"><span class="toc-text">IOS</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#IOS%E6%97%A5%E5%BF%97%E6%96%87%E4%BB%B6"><span class="toc-text">IOS日志文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C%E5%91%BD%E4%BB%A4-1"><span class="toc-text">基本操作命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#IOS%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="toc-text">IOS文件系统</span></a></li></ol></li></ol></li></ol>
+    
+<style>
+    .left-col .switch-btn,
+    .left-col .switch-area {
+        display: none;
+    }
+    .toc-level-3 i,
+    .toc-level-3 ol {
+        display: none !important;
+    }
+</style>
+</div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Linux基础"><a href="#Linux基础" class="headerlink" title="Linux基础"></a>Linux基础</h1><h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><h3 id="常用的系统命令"><a href="#常用的系统命令" class="headerlink" title="常用的系统命令"></a>常用的系统命令</h3><pre><code class="php+HTML">1.pwd #当前位置
+2.cd .. #返回上一级
+3.cd + /path/ #穿越到某个路径
+4.cd - #上一个路径
+5.ls + /path/ #查看某文件夹下的内容
+6.ls -l #当前文件夹里的文件信息（不包括子目录）
+7.ls -lR #文件夹全部文件信息（包括子目录）
+8.mkdir #新建文件夹
+9.touch #建立文档
+10.rm #删除
+11.echo helloworld &gt; new.txt #将helloworld覆盖写入文档
+12.echo abc &gt;&gt; new.txt #将abc追加到文档末尾
+13.cp /path1/2.txt /path2/3.txt #将2.txt从path1复制到path2并命名为3.txt
+14.cp -r path1/file /path2 #将文件夹file从path1复制到path2不重命名
+15.mv /path1/2.txt /path2/2.txt #将2.txt从path1复制到path2不重命名
+16.cat #全部打印到终端
+17.more #提供翻页查看
+18.head -n 3 abc.txt #看abc.txt文档的前三行
+19.ctrl U #清理光标前内容
+20.ctrl K #清理光标后内容
+21.tar cvf 2.tar 1.txt #压缩文档
+22.tar xvf 2.tar #解压缩文档
+23.which java #查找程序位置
+</code></pre>
+<h3 id="VIM命令"><a href="#VIM命令" class="headerlink" title="VIM命令"></a>VIM命令</h3><pre><code class="php+HTML">1.Esc键 + ./hello #搜索hello字符串
+2.Esc键 + :2 #跳到第二行
+3.dd #删除光标所在行
+4.ndd #删除光标下n行
+5.yy #复制行
+6.Esc键 + set nu #显示行号
+7.p #粘贴
+</code></pre>
+<h3 id="Linux用户权限划分命令"><a href="#Linux用户权限划分命令" class="headerlink" title="Linux用户权限划分命令"></a>Linux用户权限划分命令</h3><p><strong>用户组</strong>：具有<strong>相同特征</strong>的用户集合，一个用户可同时在多组</p>
+<pre><code class="php+HTML">1.useradd test  #添加一个叫test的账户
+2.usermod -g usergroup username #修改账户所属组
+3.usermod -l newname username #修改账户名
+4.userdel username #删除账户
+5.passwd username #给某个账户重置密码
+6.groups username #查看账户所属组
+7.more /etc/group #查看主机账户列表
+8.groupadd groupnanme #添加组
+9.groupdel groupnanme #删除组
+</code></pre>
+<h3 id="文件权限命令"><a href="#文件权限命令" class="headerlink" title="文件权限命令"></a>文件权限命令</h3><p>用户<strong>需要一定的权限</strong>才可以操作一个程序，例如执行、打开、读取。</p>
+<ul>
+<li><p><strong>文件权限判断流程</strong></p>
+<ul>
+<li>第一次判断:判断是否为文件<strong>所有者</strong>，如果否，执行第二次判断。</li>
+<li>第二次判断:判断用户是否属于<strong>有权限的组</strong></li>
+<li>如果<strong>两次全为否</strong>则当前用户则没有操作这个文件的权限。</li>
+</ul>
+</li>
+<li><p><strong>文件权限格式</strong></p>
+<ul>
+<li><p><code>-rwxrwxrwx</code></p>
+</li>
+<li><p><strong>r</strong> 表示文件可以被读（read）</p>
+<p><strong>w</strong> 表示文件可以被写（write）</p>
+<p><strong>x</strong> 表示文件可以被执行（如果它是程序的话）</p>
+<ul>
+<li><p>rwx也可以用数字来代替</p>
+<ul>
+<li><p><strong>r</strong> ————4</p>
+<p><strong>w</strong> ———–2</p>
+<p><strong>x</strong> ————1</p>
+<p><strong>-</strong> ————0</p>
+</li>
+</ul>
+</li>
+<li><p>第1位：文件类型（<strong>d目录，-普通文件，l链接文件</strong>）</p>
+</li>
+<li><p>第2-4位：所属用户权限，用u(user)表示</p>
+</li>
+<li><p>第5-7位：所属组权限,用g(group)表示</p>
+</li>
+<li><p>第8-10位：其他用户权限,用o(other)表示</p>
+</li>
+<li><p>第2-10位：表示所有权限，用a(all)表示</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>符号含义</strong></p>
+<ul>
+<li><code>+</code>号代表添加权限<ul>
+<li><code>chomd +x 1.txt</code> #给1.txt添加执行权限 </li>
+</ul>
+</li>
+<li><code>-</code>号代表剥夺权限<ul>
+<li><code>chomd -x 1.txt</code> #剥夺1.txt的执行权限</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>常见的文件权限</strong></p>
+</li>
+<li><pre><code class="php+HTML">-rw—— (600) #只有所有者才有读和写的权限
+
+-rw-r–r– (644) #只有所有者才有读和写的权限，组群和其他人只有读的权限
+
+-rwx—— (700) #只有所有者才有读，写，执行的权限
+
+-rwxr-xr-x (755) #只有所有者才有读，写，执行的权限，组只有读和执行的权限，其他人只有执行的权限
+
+-rwx–x–x (711) #只有所有者才有读，写，执行的权限，组群和其他人只有执行的权限
+
+-rw-rw-rw- (666) #每个人都有读写的权限
+
+-rwxrwxrwx (777) #每个人都有读写和执行的权限
+
+“755”构成:&quot;0&quot;表示没有权限、“1”表示可执行权限、“2”表示可写权限、“4”表示可读权限。“7=1+2+4，5=1+4”
+</code></pre>
+</li>
+<li><p><strong>更改文件权限命令</strong></p>
+</li>
+</ul>
+<pre><code class="php+HTML">1.chomd +x #添加执行权限 
+2.chmod -x #去除执行权限
+3.chmod u(当前用户)/o(其他用户) + x #给当前/其他用户执行权限
+</code></pre>
+<h3 id="目录权限命令"><a href="#目录权限命令" class="headerlink" title="目录权限命令"></a>目录权限命令</h3><ul>
+<li>文件如果拥有x（执行权限）则代表可以用<code>cd</code>命令进入该目录</li>
+</ul>
+<pre><code class="php+HTML">1.chown user:usergroup 1 #修改1文件的所有者,组
+2.chown -R user:usergroup filename #使用-R递归修改文件目录里面的子文件权限，只改了文件的权限，并不会修改文件里文档的权限
+</code></pre>
+<h2 id="密码文件"><a href="#密码文件" class="headerlink" title="密码文件"></a>密码文件</h2><h3 id="etc-passwd"><a href="#etc-passwd" class="headerlink" title="/etc/passwd"></a>/etc/passwd</h3><ul>
+<li>所有用户都能查看</li>
+<li>文件内容</li>
+<li><code>root:x:0:0:root:/root:/bin/bash</code> <ul>
+<li>1、账号名称</li>
+<li>2、原先用来保存密码的，现在密码都放在/etc/shadow中，所以这里显示x</li>
+<li>3、UID，使用者ID。默认的系统管理员的UID为0，我们添加用户的时候最好使用1000以上的UID，1-1000范围的UID最好保留给系统用。</li>
+<li>4、GID，也就是群组ID</li>
+<li>5、关于账号的一些说明信息</li>
+<li>6、账号的家目录，家目录就是你登陆系统后默认的那个目录</li>
+<li>7、账号使用的shell</li>
+</ul>
+</li>
+</ul>
+<h3 id="etc-shadow"><a href="#etc-shadow" class="headerlink" title="/etc/shadow"></a>/etc/shadow</h3><ul>
+<li>只有root可以查看</li>
+<li>文件内容<ul>
+<li><code>slave1:$1$chN84aE2$tjv1V0qZm4WlO14WAAo0Z0:18782:0:99999:7:2::</code> <ul>
+<li>1、账户名称</li>
+<li>2、加密后的密码。如果这一栏的第一个字符为!或者*的话，说明这是一个不能登录的账户。eg:<code>daemon:*:15259:0:99999:7:2::</code></li>
+<li>3、最近改动密码的日期,从1970年1月1日算起,换算:<code> date -d &quot;1970-01-01 18782 days&quot;</code></li>
+<li>4、修改密码最小间隔时间。如果是 0，则密码可以随时修改；如果是 10，则代表密码修改后 10 天之内不能再次修改密码</li>
+<li>5、密码需要重新变更的天数。该用户的密码会在设定天数后过期，如果为99999则没有限制</li>
+<li>6、密码过期预警天数。如果在5中设置了密码需要重新变更的天数，则会在密码过期的前7天进行提醒</li>
+<li>7、密码过期的宽恕时间：如果在5中设置的日期过后，用户仍然没有修改密码，则该用户还可以继续使用2天</li>
+<li>8、账号失效日期，过了这个日期账号就不能用了，从1970年1月1日算起</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="Linux-文件系统"><a href="#Linux-文件系统" class="headerlink" title="Linux 文件系统"></a>Linux 文件系统</h2><h3 id="Linux文件系统结构"><a href="#Linux文件系统结构" class="headerlink" title="Linux文件系统结构"></a>Linux文件系统结构</h3><p>​    <strong>Virtual File System(虚拟文件系统VFS)</strong>:衔接<u>各种各样的文件系统</u>，VFS在用户和文件系统之间<strong>提供了一个交换层</strong>，用户和进程不需要知道文件所在的文件系统类型。隐藏了各种硬件的具体细节，把文件系统操作和不同文件系统的具体实现细节分离了开来。为所有的设备提供了统一的接口。</p>
+<p><strong>Buffer Cache(缓冲区缓存)</strong>:将数据保留一段时间（或者随即预先读取数据以便在需要时就可用）优化了对物理设备的访问。</p>
+<p><strong>Device Drivers(设备驱动程序)</strong>:控制操作系统和硬件设备之间的交互。</p>
+<p><strong>Network Interface (网络接口)</strong>:提供了对各种网络标准的存取和各种网络硬件的支持。</p>
+<p><img src="/2021/06/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/v2-212ca855ac2dad87983b23b6539e21ce_1440w.jpg" alt="Linux文件系统结构"></p>
+<p>​                                                                                                       </p>
+<img src="/2021/06/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/v2-b92499b17ed11bc279689ecdb6efb4b6_b.jpg" alt="Linux文件系统结构" style="zoom: 67%;">
+
+<p>​                                         </p>
+<h3 id="Linux文件系统"><a href="#Linux文件系统" class="headerlink" title="Linux文件系统"></a>Linux文件系统</h3><ul>
+<li>ext：第一代的 ext 文件系统，由于它原始的时间戳（每个文件仅有一个时间戳）仅仅一年后，ext2 就替代了它。</li>
+<li>ext2 ：早期linux中常用的文件系统,如果在将数据写入到磁盘的时候，系统发生崩溃或断电，则容易发生灾难性的数据损坏.</li>
+<li>ext3 ：ext2的升级版，带日志功能。日志是磁盘上的一种特殊的分配区域，其写入被存储在事务中。<ul>
+<li>日志的应用<ul>
+<li>如果该事务完成磁盘写入，则日志中的数据将提交给文件系统自身。</li>
+<li>如果系统在该操作<strong>提交前崩溃</strong>，则重新启动的系统识别其为未完成的事务而将其进行<strong>回滚</strong>，就像从未发生过一样。正在处理的文件可能依然会丢失，但<strong>文件系统本身保持一致</strong>，且其它所有数据都是安全的。</li>
+</ul>
+</li>
+<li>ext3 文件系统的 Linux 内核中实现了三个级别的日志记录方式： <strong>日记(journal)、 顺序(ordered)和 回写(writeback)</strong><ul>
+<li><strong>日记(journal)</strong>:最低风险模式，<u>在将数据和元数据提交给文件系统之前将其写入日志。这可以保证正在写入的文件与整个文件系统的一致性</u>，但其显著降低了性能。</li>
+<li><strong>顺序(ordered)</strong>:顺序模式将<strong>元数据写入日志</strong>而<strong>直接将数据提交到文件系统</strong>。这里的操作顺序是固定的，这么做可以减少数据回滚量。<ul>
+<li>元数据提交到日志；</li>
+<li>数据写入文件系统；</li>
+<li>将日志中关联的元数据更新到文件系统</li>
+</ul>
+</li>
+<li><strong>回写(writeback)</strong>:最不安全的日志模式。元数据会被记录到日志，但数据不会。<u>元数据和数据都可以以任何有利于获得最佳性能的顺序写入</u>。虽然显著提高性能，但安全性低很多。在崩溃或崩溃之前写入的文件很容易丢失或损坏。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>ext4 ：linux常用文件系统格式，支持大文件系统，提高了对碎片的抵抗力，有更高的性能以及更好的时间戳。<ul>
+<li>ext3 和 ext4的差别：<ul>
+<li>兼容性。允许 ext3 文件系统原地升级到 ext4；允许ext4 驱动程序以ext3 模式自动挂载ext3 文件系统</li>
+<li>寻址地址。ext3 文件系统使用 32 位寻址，ext4 使用 48 位的内部寻址</li>
+<li>性能更好。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="Linux文件类型"><a href="#Linux文件类型" class="headerlink" title="Linux文件类型"></a>Linux文件类型</h3><ol>
+<li><strong>普通文件（-）</strong><ul>
+<li>从Linux的角度来说，类似mp4、pdf、html这样应用层面上的文件类型都属于普通文件</li>
+</ul>
+</li>
+<li><strong>目录文件（d，directory file）</strong></li>
+<li><strong>符号链接（l，symbolic link）</strong><ul>
+<li>这种类型的文件类似Windows中的快捷方式，是指向另一个文件的间接指针，也就是常说的软链接</li>
+</ul>
+</li>
+<li><strong>块设备文件（b，block）</strong>和<strong>字符设备文件（c，char）</strong><ul>
+<li>这些文件一般隐藏在/dev目录下，在进行设备读取和外设交互时会被使用到</li>
+<li>比如磁盘光驱就是块设备文件，串口设备则属于字符设备文件</li>
+<li>系统中的所有设备要么是块设备文件，要么是字符设备文件</li>
+</ul>
+</li>
+<li><strong>管道(FIFO)文件（p，pipe）</strong><ul>
+<li>管道文件主要用于进程间通讯。比如使用<code>mkfifo</code>命令可以创建一个FIFO文件，启用一个进程A从FIFO文件里读数据，启动进程B往FIFO里写数据</li>
+</ul>
+</li>
+<li><strong>套接字（s，socket）</strong><ul>
+<li>用于进程间的网络通信，也可以用于本机之间的非网络通信</li>
+</ul>
+</li>
+</ol>
+<h3 id="Linux文件目录"><a href="#Linux文件目录" class="headerlink" title="Linux文件目录"></a>Linux文件目录</h3><img src="/2021/06/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/v2-b90ccc05d3a17b7bf30e4528faf96f4a_1440w.jpg" alt="Linux文件目录" style="zoom:33%;">
+
+
+
+<h3 id="Linux文件系统特性"><a href="#Linux文件系统特性" class="headerlink" title="Linux文件系统特性"></a>Linux文件系统特性</h3><p>​     <img src="/2021/06/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/v2-9d77e25913894df26b0374ceae25c605_b.jpg" alt="索引节点、目录项以及文件数据关系图"></p>
+<p><strong>Linux读取一个文件的流程</strong>:</p>
+<p><u>1.先读取这个文件inode块里面存放的所有索引号码。</u></p>
+<p><u>2.按照号码去寻找对应的block块。</u></p>
+<p><u>3.最后读取block块里面的内容。</u>              </p>
+<p><em>就像一本书有封面、目录和正文一样。在文件系统中，超级块就相当于封面，从封面可以得知这本书的基本信息；inode 块相当于目录，从目录可以得知各章节内容的位置；而数据块则相当于书的正文，记录着具体内容。</em></p>
+<p><strong>前置知识</strong></p>
+<ol>
+<li>在Linux中，一个文件分为<strong>两个部分</strong>。一个是文件的权限和属性，另外一个是文件的具体内容。这两者分别存放在<strong>inode</strong>块和<strong>block</strong>块中。<ul>
+<li><strong>每个block块都有一个索引号码</strong>，这个索引号码会被记录在inode里面</li>
+<li><strong>索引节点（ inode）</strong>它是文件系统的最基本单元，是文件系统连接任何子目录、任何文件的<strong>桥梁</strong>。用来记录文件的元信息，比如 inode 编号、文件大小、访问权限、创建时间、修改时间、<strong>数据在磁盘的位置</strong>等等。索引节点是文件的<strong>唯一</strong>标识，它们之间<strong>一一对应</strong>，会被存储在硬盘中，所以<strong>索引节点同样占用磁盘空间</strong>。</li>
+</ul>
+</li>
+<li>为了减少读盘次数，内核缓存了目录的树状结构，称为<strong>dentry cache</strong>。<strong>dentry cache</strong>只保存<strong>最近访问</strong>过的目录项，如果要找的目录项在cache中没有，就要从磁盘读到内存中。</li>
+</ol>
+<p><img src="/2021/06/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/v2-d9e36f97b24b2a7f760a81d0b095c36d_b.jpg" alt="块分布图"></p>
+<p><strong>引导块</strong>：在系统启动时用于启用引导<br><strong>超级块</strong>:包含整个文件系统的<strong>基本信息</strong>。如块大小，inode/block的总量、使用量、剩余量，指向空间 inode 和数据块的指针等相关信息<br><strong>块组描述符</strong>:包含文件系统中<strong>各个块组</strong>的状态。比如块组中空闲块和 inode 的数目等<br><strong>数据位图和 inode 位图</strong>：用于表示对应的数据块或 inode 状态<br><strong>inode table</strong>:包含了所有的 inode<br><strong>数据块</strong>:实际记录文件的内容。若文件太大时，会占用多个block</p>
+<p><strong>例子</strong>:读取2.txt这个文本文件，它的路径是<code>/root/1/2.txt</code></p>
+<ul>
+<li><p>1.根据inode查找文件:</p>
+<ul>
+<li><p>查找根目录“/”</p>
+</li>
+<li><p>查找/root/文件夹</p>
+</li>
+<li><p>查找/root/1/文件夹</p>
+</li>
+<li><p>查找/root/1/2.txt文本文件</p>
+</li>
+<li><pre><code class="php+HTML">[root@slave1 1]# ls -dil / /root/ /root/1/ /root/1/2
+     64 dr-xr-xr-x. 17 root root 224 6月   4 01:24 / #先读取根目录“/”，根目录即挂载点的inode号码是64
+8409153 dr-xr-x---.  7 root root 277 8月  17 23:18 /root/ #通过编号为64的inode块找到/root/对应的block块，返回/root/对应的inode号码是8409153。
+7073042 drwxr-xr-x.  2 root root  15 8月  17 20:57 /root/1/ #通过编号为8409153的inode块来找到/root/1/对应block块，返回/root/1/对应的inode号码是7073042。   
+7073049 -rw-r--r--.  1 root root  11 8月  17 20:55 /root/1/2  #通过编号为7073042的inode块来找到/root/1/2.txt对应block块，返回/root/1/2.txt对应的inode号码是7073049。
+</code></pre>
+</li>
+<li><p>最后在7073049这个inode中找到2.txt</p>
+</li>
+</ul>
+</li>
+<li><p>2.读取文件</p>
+<ul>
+<li>从inode找到所有block块的索引号</li>
+<li>根据索引号找到block块</li>
+<li>读取具体内容     </li>
+</ul>
+</li>
+</ul>
+<p><strong>硬链接</strong>:一般情况下，文件名和inode号码是”一一对应”关系，每个inode号码对应一个文件名。但是，Linux系统允许，多个文件名指向同一个inode号码。A,B互不干涉</p>
+<ul>
+<li><code>ln &lt;源文件B&gt;&lt;新文件A&gt;</code> </li>
+</ul>
+<p><strong>软链接(符号连接)</strong>:文件A和文件B的inode号码虽然不一样，但是文件A的内容是文件B的路径。读取文件A时，系统会自动将访问者导向文件B。如果删除了B，A失效。</p>
+<ul>
+<li><code>ln -s &lt;源文件B&gt;&lt;新文件A&gt;</code> </li>
+</ul>
+<p><strong>硬链接和软链接的区别</strong>:</p>
+<ol>
+<li>硬链接原文件和新文件的inode编号一致。而软链接不一样。</li>
+<li>对原文件删除，会导致软链接不可用，而硬链接不受影响。</li>
+<li>对原文件的修改，软、硬链接文件内容也一样的修改。</li>
+</ol>
+<h2 id="Linux的引导和启动"><a href="#Linux的引导和启动" class="headerlink" title="Linux的引导和启动"></a>Linux的引导和启动</h2><p>操作系统的启动分为两个阶段：<strong>引导和启动</strong>。<br>引导阶段:开始于打开电源或者重启，结束于内核初始化完成和 <strong>systemd</strong> 进程成功运行。<br>启动阶段:开始于引导阶段结束，结束于操作系统进入可操作状态。</p>
+<h3 id="引导过程"><a href="#引导过程" class="headerlink" title="引导过程"></a>引导过程</h3><ul>
+<li><strong>BIOS 上电自检（POST）</strong></li>
+<li><strong>引导装载程序 (GRUB2)</strong></li>
+<li><strong>内核初始化</strong></li>
+<li><strong>启动 systemd，其是所有进程之父</strong></li>
+</ul>
+<h4 id="BIOS-上电自检（POST）"><a href="#BIOS-上电自检（POST）" class="headerlink" title="BIOS 上电自检（POST）"></a>BIOS 上电自检（POST）</h4><ul>
+<li>上电自检主要由<u>硬件部分</u>来完成。</li>
+<li>BIOS 上电自检<ul>
+<li><u>确认硬件的功能正常</u></li>
+<li>查找引导扇区</li>
+<li>有效引导记录的<u>第一个引导扇区被装载到内存</u>中，并且<strong>控制权</strong>也转移到此段代码。</li>
+</ul>
+</li>
+</ul>
+<h4 id="引导装载程序-GRUB2"><a href="#引导装载程序-GRUB2" class="headerlink" title="引导装载程序 (GRUB2)"></a>引导装载程序 (GRUB2)</h4><p><strong>GRUB2</strong> 是一个用于计算机<u>寻找内核并加载其到内存</u>的程序。</p>
+<p>1.BIOS 查找<strong>MBR（主引导记录）</strong><br>2.加载 Linux 内核到内存，<u>转移控制权到内核</u><br>3.内核(压缩格式)自解压完成，则加载 <strong>systemd</strong>进程并转移控制权到 <strong>systemd</strong><br>4.<strong>systemd</strong>启动，引导过程的结束。此刻，Linux 内核和 systemd 处于运行状态</p>
+<h3 id="启动过程"><a href="#启动过程" class="headerlink" title="启动过程"></a>启动过程</h3><p><em>启动过程使 Linux 系统进入可操作状态，并能够执行用户功能性任务。</em></p>
+<h4 id="启动systemd"><a href="#启动systemd" class="headerlink" title="启动systemd"></a>启动systemd</h4><p><strong>systemd</strong> 是所有进程的父进程，它负责将 Linux 主机带到一个<em>用户可操作状态（可以执行功能任务</em>）。</p>
+<ul>
+<li><img src="/2021/06/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/3.jpg" alt="逐级启动" style="zoom:50%;"></li>
+<li>在 <code>sysinit.target</code> 的条件满足以后，<strong>systemd</strong> 接下来启动 <code>basic.target</code>，启动其所要求的所有单元。 </li>
+<li>用户级目标态（<code>multi-user.target</code> 或 <code>graphical.target</code>） 初始化。<ul>
+<li><code>multi-user.target</code> 必须在图形化目标态 <code>graphical.target</code> 之前先达成。</li>
+</ul>
+</li>
+</ul>
+<h4 id="启动完成标志"><a href="#启动完成标志" class="headerlink" title="启动完成标志"></a>启动完成标志</h4><p>以 <code>*</code> 开头的目标态是通用的启动状态，说明系统已经启动完成。eg: <code>*graphical.target</code> or <code>*multi-user.target</code></p>
+<ul>
+<li>如果 <code>multi-user.target</code> 是默认的目标态，则系统以命令行登录界面呈现于用户。</li>
+<li>如果 <code>graphical.target</code> 是默认的目标态，则系统以图形登录界面呈现于用户。</li>
+</ul>
+<h1 id="Windows基础"><a href="#Windows基础" class="headerlink" title="Windows基础"></a>Windows基础</h1><h2 id="Windows引导和启动"><a href="#Windows引导和启动" class="headerlink" title="Windows引导和启动"></a>Windows引导和启动</h2><p>目前主要的系统引导方式有两种：<br>1.<strong>传统BIOS + MBR</strong><br>2.<strong>新型UEFI + GPT</strong></p>
+<p><u>UEFI BIOS可同时识别MBR分区和GPT分区</u>，所以MBR和GPT磁盘都可用于启动操作系统。<em>但是UEFI只能将系统安装在GPT磁盘中</em>。<br><strong>UEFI</strong>:微型操作系统，能够识别FAT文件系统，运行efi程序。</p>
+<h3 id="传统BIOS-MBR"><a href="#传统BIOS-MBR" class="headerlink" title="传统BIOS + MBR"></a>传统BIOS + MBR</h3><p><img src="https://pic2.zhimg.com/80/v2-151011877000bb57b29c0c86576a5691_1440w.jpg" alt="传统BIOS + MBR"></p>
+<p>1.上电，执行Legacy BIOS.<br>2.进行POST自检，完成硬件初始化。<br>3.查找<u>MBR中的IPL</u>（用于确定活动主分区），找到<strong>IPL</strong>的<u>引导扇区（位于第一个扇区）中的引导记录（PBR）</u>，<u>载入</u>PBR<em>中的启动管理器</em>（<code>bootmgr.exe</code>或<code>NTLDR</code>）。<br>4.<strong>bootmgr.exe</strong><u>读取IPL根目录下</u>boot文件夹里的<u>启动设置文件（BCD或boot.ini）</u>，然后<u>载入程序winload.exe</u>（位置：C:\Windows\system32\winload.exe）来<u>加载OS内核</u>。<br>5.内核程序执行系统初始化。</p>
+<h3 id="新型UEFI-GPT"><a href="#新型UEFI-GPT" class="headerlink" title="新型UEFI + GPT"></a>新型UEFI + GPT</h3><p><img src="https://pic2.zhimg.com/80/v2-c6d908835871f938fe71c783b4cc8e01_1440w.jpg" alt="新型UEFI + GPT"></p>
+<p>1.开机，执行UEFI BIOS。<br>2.UEFI BIOS先<u>直接初始化CPU和内存</u>，CPU和内存若有问题则直接黑屏，其后启动<strong>PXE</strong>采用枚举方式搜索各种硬件并加载驱动，完成硬件初始化。<br>3.从EFI分区(不一定第一个扇区)找到、读入、执行<u>启动管理器</u>（\efi\Microsoft\boot\bootmgfw.efi）。<br>4.<code>bootmgfw.efi</code>导入EFI分区<strong>BCD</strong>文件（efi\Microsoft\BCD），然后<u>载入程序winload.efi</u>（位置：C:\Windows\system32\winload.efi）来<u>加载OS内核</u>。</p>
+<p>Tips：BCD是一个数据库文件，如果包含多个系统，信息会包含在BCD中，通过显示一个系统列表供用户选择。</p>
+<h2 id="Windows用户管理"><a href="#Windows用户管理" class="headerlink" title="Windows用户管理"></a>Windows用户管理</h2><p>每个账户有自己<strong>唯一的SID</strong>（安全标识符）<br>账户组作用：简化权限赋予</p>
+<h3 id="本地账户与域账户"><a href="#本地账户与域账户" class="headerlink" title="本地账户与域账户"></a><strong>本地账户与域账户</strong></h3><p>Windows账户分为<u>本地用户账户</u>和<u>域账户</u>两种。</p>
+<ul>
+<li>本地帐户是<strong>本机建立</strong>的用户帐户</li>
+<li><strong>域账户</strong>是<strong>域服务器</strong>上由管理员分配给你的帐户。</li>
+</ul>
+<p><strong>本地用户账户和域账户的区别：</strong></p>
+<p>1.本地用户账户<u>存储在本地的<strong>sam</strong>数据库</u>中，而<strong>域账户存储在AD(active directory)中</strong>。</p>
+<p>2.使用<em>本地用户账户</em>的时候，用户只能使用该账户<strong>登录到本地</strong>计算机上，而使用<u>域账户用户可以在整个域环境中所有的计算机上进行登录</u>。</p>
+<p>3.本地账户只能在<strong>账户所属的计算机</strong>上进行管理，每个计算机上的<strong>管理员单独管理自己机器上的本地账户</strong>。而域账户通过AD用户和计算机管理工具进行统一的管理。</p>
+<h3 id="常见内置组"><a href="#常见内置组" class="headerlink" title="常见内置组"></a>常见内置组</h3><p>1）Administrators：管理员组<br>2）Backup Operators：具有备份还原权限的组<br>3）Guests：来宾组<br>4）Network ：网络配置组<br>5）Remote：远程桌面组<br>6）Users：新用户默认组<br>7）Print ：打印机组</p>
+<h3 id="特殊本地内置组"><a href="#特殊本地内置组" class="headerlink" title="特殊本地内置组"></a>特殊本地内置组</h3><p>9）Everyone：任何一个用户都属于这个组<br>10）Authenticated Users：任何使用有效用户来登录此计算机的用户，都属于此组<br>11）Interactive:任何在<strong>本地登录</strong>（按ctrl+alt+del键登录）的用户，都属于此组<br>12）Network:通过<strong>网络登录</strong>此计算机的用户，都属于此组</p>
+<h3 id="组管理命令"><a href="#组管理命令" class="headerlink" title="组管理命令"></a>组管理命令</h3><pre><code class="php+HTML">1.net localgroup #输出所有组
+2.net localgroup groupname #输出指定组的成员
+3.net localgroup groupname /add #添加组
+4.net localgroup groupname /del #删除组
+5.net localgroup groupname username /del # 从组中踢出用户
+6.net localgroup groupname username /add # 添加用户到组
+</code></pre>
+<h3 id="内置账户"><a href="#内置账户" class="headerlink" title="内置账户"></a>内置账户</h3><p><strong>内置账号无法删除</strong></p>
+<p>1.<strong>administrator</strong> #管理员<br>2.<strong>system</strong> #系统账户，最高权限<br>3.<strong>local services</strong> #本地服务账户，user的权限<br>4.<strong>network services</strong> #网络服务账户，user权限</p>
+<h3 id="用户管理命令"><a href="#用户管理命令" class="headerlink" title="用户管理命令"></a>用户管理命令</h3><pre><code class="php+HTML">1.net user #输出所有用户
+2.net user kk password #修改用户kk的密码
+3.net user ko password /add #添加新用户ko
+4.net user ko /del #删除ko用户
+</code></pre>
+<h2 id="Windows文件系统"><a href="#Windows文件系统" class="headerlink" title="Windows文件系统"></a>Windows文件系统</h2><p><strong>文件系统，就是文件的储存方式。</strong></p>
+<p>每个驱动器都有自己的根目录结构，这样形成了多个树并列的情形，如图所示：</p>
+<p><img src="https://img-blog.csdnimg.cn/20190309112559820.png" alt="Windows文件系统结构"></p>
+<h3 id="常见的文件系统"><a href="#常见的文件系统" class="headerlink" title="常见的文件系统"></a>常见的文件系统</h3><p><em>NTFS(最常用)</em><br><em>FAT32</em><br><em>FAT(FAT16)</em><br><em>ExFAT</em></p>
+<p><strong>FAT</strong>:在软盘、闪存(U盘)，以及很多嵌入式设备上常见，<strong>16位</strong>，支持的分区<strong>最大为2GB</strong>。</p>
+<p><strong>FAT32</strong>: 兼容性好,是为<strong>32位计算机</strong>设计的，每个<em>簇容量都固定为4KB（32位）</em>,<u>文件不能超过 2^32 - 1 个字节（ 4GB）</u>。分区容量下限是512MB，不同操作系统的上限不同，最大不超过2TB ，一般系统32GB 。例如Win2000最大支持32GB FAT32分区，而WinXP最大可达2TB FAT32分区。</p>
+<p><strong>ExFAT(FAT64)</strong>:ExFAT是专门为闪存设计的文件系统，单个文件的存放和传输<strong>突破了4GB的限制</strong>。<strong>兼容性好</strong>，在windows、Linux、Mac系统上都是可以读写。</p>
+<p><strong>NTFS</strong>:采用“日志式”的文件系统，记录磁盘的详细读写操作，<strong>最大支持的独立分区是2TB</strong>。</p>
+<p>在稳定性和安全性方面，NTFS要优于FAT32，但是FAT32兼容较旧的存储设备及系统，如DOS系统等。两者的主要<strong>区别</strong>体现在：<br>1.<strong>FAT32不支持存放和传输超过4G的单个文件</strong><br>2.NTFS无法运行在DOS系统下，FAT32则可以兼容DOS系统</p>
+<p><strong>FAT32与exFAT的区别：</strong></p>
+<p>大多数U盘在格式化时选用FAT32为默认文件系统。它最大优点就是在一个不超过8GB的分区中，FAT32分区格式的每个簇容量都固定为4KB，可以<strong>大大地减少磁盘的浪费，提高磁盘利用率</strong>。</p>
+<ul>
+<li>比如传输12k的文件。FAT32每个簇4K，占三个簇，浪费0K。exFAT每个簇256K，占一个簇，浪费244K。</li>
+</ul>
+<p><strong>NTFS相比FAT会让闪存性能降低</strong></p>
+<ul>
+<li>NTFS因为要记录磁盘的详细操作，对U盘这种<strong>快闪存储介质</strong>会造成较大的负担。<ul>
+<li>比如同样存取一个文件，在 <u>NTFS系统上的读写次数就会比FAT32多</u>，理论上NTFS格式的U盘比较容易损坏。</li>
+<li>U盘带宽有限，NTFS文件系统频繁读写占据通道会让<u>磁盘性能降低</u>。</li>
+</ul>
+</li>
+</ul>
+<h2 id="Windows服务"><a href="#Windows服务" class="headerlink" title="Windows服务"></a>Windows服务</h2><p>Microsoft Windows 服务可以在 Windows 中长时间运行应用程序，非常适合需要长时间运行功能时使用。</p>
+<h2 id="Windows注册表"><a href="#Windows注册表" class="headerlink" title="Windows注册表"></a>Windows注册表</h2><h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>注册表是Microsoft Windows中的一个重要的数据库，用于存储系统和应用程序的<strong>设置信息</strong>，在运行中输入<code>regedit</code>即可进入。</p>
+<ul>
+<li><img src="https://img-blog.csdnimg.cn/20190327075949591.png" alt="Windows注册表结构"></li>
+</ul>
+<h3 id="注册表的组成结构"><a href="#注册表的组成结构" class="headerlink" title="注册表的组成结构"></a>注册表的组成结构</h3><ul>
+<li><p>注册表由键（<code>key</code>，或称“项”）、子键（<code>subkey</code>，子项）和值项（<code>value</code>）构成的<code>hive</code>文件。</p>
+</li>
+<li><p>注册表的结构是一个<strong>树状结构</strong>。一个<strong>键</strong>（<code>key</code>，或称“项”）就是一个节点，<strong>子键</strong>（<code>subkey</code>)就是这个节点的<strong>子节点</strong>，子健也是键。键的<u>一条属性被称为一个<code>value</code>（值项）</u>，<code>value</code>由名称、类型、数据类型和数据组成。<u>一个键可以有多个值</u>，每个值的名称不同，<strong>如果值名称是空，则该值为该键的默认值</strong>。</p>
+</li>
+<li><pre><code class="php+HTML">5个根键:
+1.HKEY_CLASSES_ROOT
+说明：启动应用程序所需的全部信息。
+2.HKEY_CURRENT_USER
+说明：当前登录用户的配置信息。
+3.HKEY_LOCAL_MACHINE
+说明：本地计算机的系统信息，包括硬件和操作系统信息，安全数据和各类软件设置信息。
+4.HKEY_USERS
+说明：所有用户的配置数据，这些数据只有在用户登录系统时才能访问。
+5.HKEY_CURRENT_CONFIG
+说明：硬件的配置信息，从HKEY_LOCAL_MACHINE中映射出来。
+</code></pre>
+</li>
+</ul>
+<h3 id="注册表基本数据类型"><a href="#注册表基本数据类型" class="headerlink" title="注册表基本数据类型"></a>注册表基本数据类型</h3><p><strong>二进制值（reg_binary）</strong>:多数<strong>硬件信息</strong>以二进制数据存储，<u>以十六进制格式显示</u>在注册表编辑器中<br><strong>字符串值（reg_sz）</strong>:包括字符串的注册表键，使用字符串数据类型<br><strong>双字节值（reg_dword）</strong>:4个字节的32位信息。它在<u>出错控制功能上用处极大</u>，其数据一般<u>以十六进制格式显示</u>在注册表编辑器中<br><strong>多字符串值(reg_multi_sz)</strong>:将<u>一系列项目</u>作为单独的一个值。对于多种网络协议、多个项目、设备列表以及其他<u>类似的列表项目</u>来说，可以使用多字符串值<br><strong>可扩充字符串值（reg_expand_sz</strong>）：代表一个可扩展的字符串</p>
+<h2 id="Windows进程"><a href="#Windows进程" class="headerlink" title="Windows进程"></a>Windows进程</h2><h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><ul>
+<li>进程是程序在处理器上的的一次动态执行过程，是程序执行的一个实例。</li>
+</ul>
+<h3 id="进程的组成"><a href="#进程的组成" class="headerlink" title="进程的组成"></a>进程的组成</h3><img src="/2021/06/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/p.jpg" alt="进程的组成" style="zoom:50%;">
+
+<ul>
+<li><p><strong>进程控制块（PCB）</strong>:用来描述进程的数据结构。<strong>每个进程都维护了一个PCB</strong>，用来保存与该进程有关的<strong>各种状态信息</strong>，主要包括以下信息</p>
+<ol>
+<li><strong>进程描述信息</strong><ul>
+<li>进程标识符，每个进程都有一个<strong>唯一的标识号</strong>。</li>
+<li>用户标识符进程归属的用户，<u>用户标识符主要为共享和保护服务</u>。</li>
+</ul>
+</li>
+<li><strong>进程控制和管理信息</strong><ul>
+<li>描述进程当前的<strong>状态信息</strong>(就绪、运行)。</li>
+<li>进程优先级，描述进程抢占处理机的优先级。</li>
+<li>进程间通信信息。</li>
+<li>使用的资源关联信息。</li>
+</ul>
+</li>
+<li><strong>资源分配清单</strong><ul>
+<li>用于说明内存地址空间或虚拟<strong>地址空间的状况</strong>。</li>
+<li>所<strong>打开文件的列表</strong>和所使用的<strong>输入/输出设备信息</strong>。</li>
+</ul>
+</li>
+<li><strong>处理机相关信息</strong><ul>
+<li>用户可见寄存器，<strong>控制和状态寄存器</strong>如程序计数器，程序状态字；</li>
+<li><strong>栈指针</strong>，系统带调用/中断处理和返回时需要用到它。</li>
+</ul>
+</li>
+</ol>
+</li>
+<li><p><strong>程序段</strong>:被进程调度程序<u>调度到CPU执行的程序代码段</u>。程序可被多个进程共享，即<strong>多个进程可以运行同一个程序</strong>。</p>
+</li>
+<li><p><strong>数据段</strong>:可以是程序加工处理的原始数据，也可以是程序执行时产生的中间或最终结果。</p>
+</li>
+<li><p><strong>共享区域</strong>:多个进程共享操作系统代码、内存、数据。</p>
+</li>
+<li><p><strong>系统栈</strong>:<strong>用于返回</strong>。保存调用参数，返回值和返回地址。</p>
+</li>
+</ul>
+<h3 id="进程的五状态模型"><a href="#进程的五状态模型" class="headerlink" title="进程的五状态模型"></a>进程的五状态模型</h3><img src="/2021/06/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/1.jpg" alt="进程三大基本状态" style="zoom:50%;">
+
+<ul>
+<li><em>创建态</em>：进程正在被创建时，操作系统会为进程分配资源、<strong>初始化PCB</strong>；</li>
+<li><strong>就绪态</strong>：当进程创建完成后，便进入“就绪态”， 处于就绪态的进程已经<strong>具备运行条件</strong>， 但由于<u>没有空闲CPU，就暂时不能运行</u>；</li>
+<li><strong>运行态</strong>：进程此时在CPU上运行，那么这个进程 处于“运行态”。CPU会执行该进程对应的程序(执行指令序列)；</li>
+<li><strong>阻塞态</strong>：进程运行的过程中，可能会<strong>等待某个事件的发生</strong>(如等待某种系统资源的分配，或者等待其他进程的响应)。<u>在这个事件发生之前，进程无法继续往下执行，此时操作系统会 让这个进程下CPU，并让它进入“阻塞态”。</u>当CPU空闲时，又会选择另一个“就绪态”进程上CPU运行；</li>
+<li><em>终止态</em>：进程执行 exit 系统调用，请求操作系统终止该进程。此时该进程会进入“终止态”，操作系统会<u>让该进程下CPU， 并回收内存空间等资源，最后还要回收该进程的PCB</u>。当终止进程的工作完成之后，这个进程就彻底消失了。</li>
+</ul>
+<h3 id="进程的七状态模型"><a href="#进程的七状态模型" class="headerlink" title="进程的七状态模型"></a>进程的七状态模型</h3><p>七状态模型是在五状态模型上新增了<strong>阻塞挂起和就绪挂起状态</strong></p>
+<p><strong>背景</strong>:在五状态模型中，一个进程被允许进入，就会被完全载入内存。<u>但是I/O活动的速度比处理器慢得多</u>，因此<u>所有进程都处于阻塞(等待某事件)状态比较常见，所以会占用大量内存</u>，使得<strong>新进程的进入请求无法满足</strong>。</p>
+<p><strong>解决</strong>:把处于阻塞态的进程<strong>从内存换到磁盘中</strong>去，加入到“挂起队列”。</p>
+<p><strong>阻塞挂起态</strong>:进程在外存中并等待一个事件。</p>
+<ul>
+<li><strong>阻塞态→阻塞挂起态</strong>:1.没有就绪进程，将其换出。2.即使有就绪进程，为满足系统基本性能需求也会换出。</li>
+<li><strong>阻塞挂起态→阻塞态</strong>:阻塞挂起态进程优先级高于所有就绪态进程且阻塞进程的事件很快就会发生。</li>
+</ul>
+<p><strong>就绪挂起态</strong>:进程在外存中，但只要被载入内存就可以被调度执行。</p>
+<ul>
+<li><strong>就绪挂起态→就绪态</strong>:内存中没有就绪态进程，就会将其调入就绪态。</li>
+<li><strong>就绪态→就绪挂起态</strong>:1.得到足够空间的唯一方法是挂起一个就绪态进程时。2.高优先级阻塞态进程很快就绪。</li>
+</ul>
+<h3 id="进程控制"><a href="#进程控制" class="headerlink" title="进程控制"></a>进程控制</h3><p><strong>用“原语实现”进程的控制</strong></p>
+<p><strong>为什么要使用原语对进程控制呢？</strong></p>
+<ul>
+<li><p><img src="/2021/06/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/l.jpg" alt="状态切换"></p>
+<ul>
+<li><p>在上图中，假设PCB中的变量 state 表示进程当前所处状态，1表示就绪态，2表示阻塞态，假设此时进程2等待的事件发生了，则操作系统中，负责进程控制的内核程序至少需要做这样两件事:</p>
+<ul>
+<li>1.将PCB 2的 state 设为 1; </li>
+<li>2.将PCB 2从阻塞队列放到就绪队列;</li>
+</ul>
+<p>完成了<strong>第一步后收到中断信号</strong>，那么<strong>PCB 2 的 state=1，但是它却被放在阻塞队列里，</strong><u>主要原因就是第一，第二步操作不是一个原子操作</u>。<span id="jump"> </span></p>
+</li>
+</ul>
+</li>
+<li><img src="/2021/06/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/x.jpg" alt="计算机系统的层级结构" style="zoom: 67%;">
+</li>
+<li><p><img src="/2021/06/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/z.jpg" alt="进程控制原语"></p>
+</li>
+<li><p><u>用原语实现进程控制</u>。原语特点是<strong>执行期间不允许中断</strong>，即:原子操作。</p>
+<ul>
+<li><em>原子操作可以是一个步骤，也可以是多个操作步骤，但是其顺序不可以被打乱，也不可以被切割而只执行其中的一部分。</em></li>
+<li>也就是说，利用这一性质，中断机制将处于关闭状态，<strong>直到运行完两步才会接受中断</strong>，如此就不会出现上述的矛盾情况。</li>
+</ul>
+</li>
+</ul>
+<h4 id="进程控制五大原语"><a href="#进程控制五大原语" class="headerlink" title="进程控制五大原语"></a>进程控制五大原语</h4><ul>
+<li><img src="/2021/06/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/20200315163724449.png" alt="创建"></li>
+<li><img src="/2021/06/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/20200315164109198.png" alt="终止"></li>
+<li><img src="/2021/06/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/20200315165047253.png" alt="阻塞和唤醒"></li>
+<li><img src="/2021/06/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/20200315165313589.png" alt="切换"></li>
+</ul>
+<p><strong>进程控制原语都在做三件事</strong>:</p>
+<ol>
+<li>更新PCB信息<ul>
+<li>所有的进程控制原语一定都会<u>修改进程状态标志</u>；</li>
+<li>剥夺当前运行进程的CPU使用权必然需要保存其运行环境；</li>
+<li>某进程开始运行前必然要<strong>恢复其运行环境</strong>；</li>
+</ul>
+</li>
+<li>将PCB插入合适的队列</li>
+<li>分配/回收资源</li>
+</ol>
+<h3 id="进程通信"><a href="#进程通信" class="headerlink" title="进程通信"></a>进程通信</h3><p><em>进程通信就是指进程之间的信息交换</em></p>
+<p>进程通信分为<strong>共享存储，消息传递，管道通信</strong></p>
+<img src="/2021/06/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/20190804173223845.jpg" alt="概述" style="zoom:50%;">
+
+<h4 id="共享存储"><a href="#共享存储" class="headerlink" title="共享存储"></a>共享存储</h4><p><img src="/2021/06/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/v2-05897b729b9b931ec6d89c058ed2d403_1440w.png" alt="信息交换方式"></p>
+<ul>
+<li>进程是分配系统资源的单位(包括内存地址空间)，因此各<strong>进程拥有的内存地址空间相互独立</strong>，如1001这个地址空间不能够同时给两个进程。为了保证安全，<u>一个进程不能直接访问另一个进程的地址空间</u>。</li>
+<li>共享存储分为两种<ul>
+<li>1.<strong>基于数据结构的共享</strong>:比如共享空间里只能放一个长度为10的数组(<strong>由用户负责控制</strong>设置数据结构)。这种共享方式速度慢、传输数据少、限制多，属于低级通信方式；</li>
+<li>2.<strong>基于存储区的共享</strong>:在内存中画出一块共享存储区，通过对该共享区的读/写交换信息实现通信，数据的形式、存放位置都<strong>由进程控制</strong>，而不是操作系统。相比之下，这种共享方式速度更快、传输数据量更大，是一种高级通信方式。</li>
+</ul>
+</li>
+</ul>
+<h4 id="管道通信"><a href="#管道通信" class="headerlink" title="管道通信"></a>管道通信</h4><p><img src="/2021/06/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/f.jpg" alt="两进程直接通过管道通信"></p>
+<ul>
+<li><p><em>“管道”是指用于连接读和写进程的一个共享文件，又名pipe 文件。其实就是在内存中开辟 一个大小固定的缓冲区。</em></p>
+<ul>
+<li>管道只能采用<strong>半双工通信</strong>，某一时间段内只能实现<strong>单向的传输</strong>。如果要实现<strong>双向同时</strong>通信，则需要设置两个管道；</li>
+<li>各进程要<strong>互斥</strong>地访问管道，即一个进程正在访问<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E4%B8%B4%E7%95%8C%E8%B5%84%E6%BA%90/1880269">临界资源</a>，另一个要访问该资源的进程必须等待。</li>
+<li>数据以<strong>字符流</strong>的形式写入管道，当管道<strong>写满时</strong>，写进程的<strong>write()系统调用将被阻塞</strong>，等待读进程将数据取走。当<strong>读进程将数据<u>全部取走</u>后，管道变空，此时读进程的</strong>read()系统调用将被阻塞；</li>
+<li>写满才能读，读空才能继续写;</li>
+<li>从管道读数据是<strong>一次性操作</strong>，<u>数据一旦被读取，它就从管道中被抛弃</u>，释放空间以便写更多的数据</li>
+</ul>
+</li>
+<li><p><strong>实例:Linux Shell管道</strong></p>
+<ul>
+<li><p>Linux 管道使用竖线|连接多个命令，<code>|</code>被称为管道符。</p>
+<ul>
+<li>Linux 管道的具体语法格式如下：<code>command1 | command2 [ | commandN... ]</code></li>
+</ul>
+</li>
+<li><p><em>例如使用 mysqldump（一个数据库备份程序）来备份一个叫做 wiki 的数据库</em>：</p>
+<ul>
+<li><pre><code class="php+HTML">mysqldump -u root -p &#39;123456&#39; wiki &gt; /tmp/wikidb.backup
+gzip -9 /tmp/wikidb.backup
+scp /tmp/wikidb.backup username@remote_ip:/backup/mysql/
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+<p>上述这组命令主要做了如下任务：</p>
+<ul>
+<li><p>mysqldump 命令用于将名为 wike 的数据库备份到文件 /tmp/wikidb.backup；其中<code>-u</code>和<code>-p</code>选项分别指出数据库的用户名和密码。</p>
+<ul>
+<li>gzip 命令用于压缩较大的数据库文件以节省磁盘空间；其中<code>-9</code>表示最慢的压缩速度最好的压缩效果。</li>
+<li>scp 命令（secure copy，安全拷贝）用于将数据库备份文件复制到 IP 地址为 remote_ip 的备份服务器的 /backup/mysql/ 目录下。其中<code>username</code>是登录远程服务器的用户名，命令执行后需要输入密码。</li>
+<li>可以使用管道将 mysqldump、gzip、ssh 命令相连接，这样就避免了创建临时文件 /tmp/wikidb.backup</li>
+</ul>
+</li>
+<li><p><strong>使用管道后的命令如下所示</strong>：</p>
+<pre><code class="php+HTML">mysqldump -u root -p &#39;123456&#39; wiki | gzip -9 | ssh username@remote_ip &quot;cat &gt; /backup/wikidb.gz&quot;
+</code></pre>
+</li>
+<li><p>例如使用管道显示按用户名排序后的当前登录系统的用户的信息。</p>
+<ul>
+<li><p><code>who</code>列出当前用户，<code>sort</code>用每行开头的第一个字符来进行排序</p>
+</li>
+<li><pre><code class="php+HTML">[c.biancheng.net]$ who | sort
+mozhiyan :0           2019-04-16 12:55 (:0)
+oozhiyan pts/0        2019-04-16 13:16 (:0)
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="消息传递"><a href="#消息传递" class="headerlink" title="消息传递"></a>消息传递</h4><p><strong>概念</strong>:进程间的数据交换以格式化的消息(Message)为单位。进程通过操作系统提供的“<strong>发送消息/接收消息</strong>”两个原语进行数据交换。</p>
+<p><strong>消息传递分类:</strong></p>
+<ol>
+<li><p><img src="/2021/06/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/v.jpg" alt="直接通信"></p>
+<ul>
+<li><strong>直接通信方式</strong>:发送进程直接把消息发送给接收进程，并<u>将它挂在接收进程的消息缓冲队列上</u>，<u>接收进程从消息缓冲队列中取得消息</u>，如上图所示。</li>
+</ul>
+</li>
+<li><img src="/2021/06/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/v2-f628cf410e6371bf18c5ba9afd64729b_1440w.jpg" alt="间接通信" style="zoom:50%;">
+
+
+
+<ul>
+<li><strong>间接通信方式</strong>:发送进程把消息发送到某个中间实体，<u>接收进程从中间实体取得消息</u>。这种中间实体一般称为信箱，这种通信方式又称<strong>信箱通信</strong>方式。</li>
+</ul>
+</li>
+</ol>
+<h4 id="三种通信方式比较"><a href="#三种通信方式比较" class="headerlink" title="三种通信方式比较"></a>三种通信方式比较</h4><p><strong>消息队列和管道都是内核对象</strong>，所执行的操作也都是系统调用，而这些<u>数据最终是要存储在内存中执行的</u>。所以消息队列和管道基本上都是<strong>4次拷贝</strong>:</p>
+<ol>
+<li>从用户空间的buf中将数据拷贝到内核buf中(内核态位于<a href="#jump">用户态</a>之下，原数据发送)</li>
+<li>内核buf将数据拷贝到内存中(数据处理)</li>
+<li>内存将数据拷贝到到内核buf(新数据返回)</li>
+<li>内核buf将数据拷贝到用户空间的buf(新数据返回)</li>
+</ol>
+<p>共享存储只需要<strong>两次拷贝</strong>:</p>
+<ol>
+<li>从输入文件到共享内存区 </li>
+<li>从共享内存区输出到文件</li>
+</ol>
+<h3 id="常用进程管理命令"><a href="#常用进程管理命令" class="headerlink" title="常用进程管理命令"></a>常用进程管理命令</h3><pre><code class="php+HTML">1.netstat -ano | findstr 80 #查看80端口的进程
+2.taskkill /im cmd.exe #结束某进程
+3.taskkill /pid 3378 #结束pid为3378的进程
+</code></pre>
+<h2 id="Windows设备管理"><a href="#Windows设备管理" class="headerlink" title="Windows设备管理"></a>Windows设备管理</h2><p>设备管理为了<strong>克服设备与cpu速度不匹配问题</strong>，使主机和设备并行工作</p>
+<h3 id="i-o设备的控制方式"><a href="#i-o设备的控制方式" class="headerlink" title="i/o设备的控制方式"></a>i/o设备的控制方式</h3><ul>
+<li><img src="/2021/06/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/aHR0cHM6Ly91cGxvYWQtaW1hZ2VzLmppYW5zaHUuaW8vdXBsb2FkX2ltYWdlcy81ODUzMTU5LWFlNWYyNzU3ZTBhNGQwNjgucG5n.png" alt="轮询方式" style="zoom: 80%;">
+</li>
+<li><p><strong>轮询方式</strong>:如图a所示，缺点是<strong>串行工作</strong>，需要等待设备，<strong>cpu参与数据传输</strong>，每次读<strong>一个字</strong>的数据，<strong>cpu花费大量时间等待输入输出的循环检测</strong>，效率低下。</p>
+</li>
+<li><p><strong>中断方式</strong>:如图b所示，以<strong>字节</strong>为单位传输，不需要等待设备，<strong>部分并行工作</strong>(没有完全并行)，<strong>cpu参与数据传输</strong>，<u>i/o设备要向cpu发送中断信号，cpu才回来写入数据</u>。</p>
+</li>
+<li><p><strong>DMA方式</strong>:如图c所示，以<strong>块</strong>为单位传输，不需要等待设备，<strong>数据直接从i/o设备→内存或者内存→i/o设备</strong>。只在传送<strong>开始和结束需要cpu干预</strong>，数据传输是在控制器控制下完成。</p>
+<ul>
+<li><strong>优点:cpu不参与数据传输，并行工作</strong></li>
+</ul>
+</li>
+<li><p><strong>i/o通道控制方式</strong>:通道是特殊的处理机。以<strong>一组数据块</strong>为单位，<strong>只需向I/O通道发送一条I/O指令</strong>(输入/输出指令，是特权指令，用户态→<a href="#jump">内核态</a>)，以给出其所<u>要执行的通道程序的首地址和要访问的I/O设备</u>，通道接到该指令后，通过<u>执行通道程序便可完成CPU指定的I/O任务</u>，数据传送<strong>结束时向CPU发中断请求</strong>。</p>
+</li>
+<li><p><strong>i/o通道与DMA方式的区别</strong>：</p>
+<ul>
+<li><strong>DMA</strong>方式需要<strong>CPU来干预传输的数据块（数据块大小、传输的内存位置等）</strong>，而通道方式中这些信息是由通道控制的。</li>
+<li>每个DMA控制器对应一台设备与内存传递数据，而一个<strong>通道可以控制多台设备与内存的数据交换</strong>。</li>
+</ul>
+</li>
+</ul>
+<h3 id="i-o缓冲区"><a href="#i-o缓冲区" class="headerlink" title="i/o缓冲区"></a>i/o缓冲区</h3><p><strong>缓冲区</strong>:是由<strong>操作系统内核</strong>进行管理，<strong>位于内核</strong>的存储区域。</p>
+<p><strong>背景</strong>:cpu运算速率远高于i/o设备速率，导致cpu停下等待输出设备。</p>
+<p><strong>缓冲区解决的问题</strong>:</p>
+<ol>
+<li>缓和cpu和i/o设备间<strong>速率不匹配</strong></li>
+<li><u>减少处理器中断频率</u>，减轻cpu负担<ul>
+<li>如果缓冲区为一位，需要100ms中断一次，那么缓存区为八位（存够八位数据），则时间放宽为800ms中断一次</li>
+</ul>
+</li>
+<li>解决数据粒度（数据单元大小）不匹配</li>
+<li>提高cpu和i/o的<strong>并行性</strong></li>
+</ol>
+<ul>
+<li><strong>单缓冲区</strong>:当缓冲区不为空时不能往里面放入数据，<strong>只有缓冲区为空才能放入数据</strong>且<strong>一次放入的数据必须充满整个缓冲块</strong>，才能从缓冲区把数据传出。<ul>
+<li><img src="/2021/06/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/202005252140571.png" alt="单缓冲" style="zoom:67%;"></li>
+</ul>
+</li>
+<li><strong>双缓冲区</strong>:<strong>同一时刻可以实现双向的数据传输</strong><ul>
+<li><img src="/2021/06/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/20200525214124568.png" alt="双缓冲区" style="zoom: 67%;"></li>
+</ul>
+</li>
+<li><strong>环形缓冲区</strong>:设置三个指针，用于指示可用缓冲区g的指针i，空缓冲区r的指针o，正在使用的缓冲区c的指针p。<ul>
+<li>1.<strong>getbuf过程</strong>。计算进程要<strong>使用缓冲区数据时</strong>，把i指针指示的g缓冲区提供给进程，令p指针指向g缓冲区第一个单元，让i指针指向下一个g缓冲区。当输入进程<strong>使用空缓冲区装数据时</strong>，把r指针所指的缓冲区提供给输入进程，同时把o指针指向下一个o缓冲区。</li>
+<li>2.<strong>releasebuf过程</strong>。<strong>当计算进程把c缓冲区数据提取完毕时</strong>，c缓冲区改为r缓冲区。<strong>当输入进程把缓冲区装满时</strong>，把c缓冲区改成g缓冲区。</li>
+</ul>
+</li>
+<li><strong>缓冲池</strong>:缓冲池由系统中共用的缓冲区组成。这些缓冲区按照同类型可以分为：<strong>空缓冲队列</strong>、<strong>装满输入数据的缓冲队列</strong>、<strong>装满输出数据的缓冲队列</strong>。<br>根据一个缓冲区在实际运算中扮演的功能不同，又设置了四种工作缓冲区：用于<strong>收容输入数据的工作缓冲区(hin)</strong> 、用于<strong>提取输入数据的工作缓冲区(sin)</strong> 、用于<strong>收容输出数据的工作缓冲区(hout)</strong> 、用于<strong>提取输出数据的工作缓冲区(sout)</strong> 。<ul>
+<li><img src="/2021/06/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/20200525214154186.png" alt="缓冲池" style="zoom:67%;"></li>
+<li><strong>收容输入</strong>:从空缓冲队列摘下一个缓冲区，把数据输入其中，装满后加入输入队列</li>
+<li><strong>提取输入</strong>:从输入队列中摘下一个缓冲区，提取完数据后加入空缓冲区队列</li>
+<li><strong>收容输出</strong>:从空缓冲队列摘下一个缓冲区，把数据输出其中，装满后加入输出队列</li>
+<li><strong>提取输出</strong>:从输出队列中摘下一个缓冲区，提取完数据后加入空缓冲区队列</li>
+</ul>
+</li>
+</ul>
+<h3 id="设备独立性"><a href="#设备独立性" class="headerlink" title="设备独立性"></a>设备独立性</h3><p><strong>背景</strong>:作业执行前对设备提出申请时，指定物理设备会让分配很简单。但<u>如果指定设备出现故障，则会被放到资源等待队列等待，将导致同类设备无法运行</u>。例如主机开启，网卡故障会导致声卡等其他设备也不能运行。</p>
+<p><strong>设备独立性</strong>:不指定物理设备，指定逻辑设备，使用户作业和物理设备分开，需要建立物理设备和逻辑设备的映射。</p>
+<h3 id="磁盘调度算法"><a href="#磁盘调度算法" class="headerlink" title="磁盘调度算法"></a>磁盘调度算法</h3><img src="/2021/06/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/18464438-51a047178ff21028.jpg" alt="常见的磁盘调度算法" style="zoom:67%;">
+
+<ul>
+<li><strong>SSTF</strong>:其缺点是对用户的服务请求的响应机会不是均等的</li>
+<li><strong>SCAN</strong>:不仅考虑到目标磁道与当前磁道的距离，更优先考虑的是磁头的当前<strong>移动方向</strong>。例如，自里向外移动时，<u>在磁头当前移动方向上选择与当前磁头所在磁道距离最近的</u>，直到再无更外的磁道需要访问才将磁臂换向，自外向里移动。如果请求刚好在磁头前方加入队列，则它几乎马上就会得到服务；如果请求刚好在磁头后方加入队列，则它必须等待，直到磁头移到磁盘的另一端，反转方向，并返回。由于是摆动式的扫描方法，两侧磁道被访问的频率仍低于中间磁道。<ul>
+<li><img src="/2021/06/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/613861755_1618029572569_014AA794B8DE2B0593F9F6C4BE7243D9.png" alt="SCAN" style="zoom:67%;"></li>
+</ul>
+</li>
+<li><strong>C-SCAN</strong>:循环扫描算法规定磁头单向移动。例如，只自里向外移动，当磁头<strong>移到最外</strong>的被访问磁道时，磁头<strong>立即返回到最里</strong>的欲访磁道，即将最小磁道号紧接着最大磁道号构成循环，进行扫描。<u>相比于SCAN算法，平均寻道时间更长</u>，但是对于各个位置磁道响应频率很平均。<ul>
+<li><img src="/2021/06/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/613861755_1618029572804_014AA794B8DE2B0593F9F6C4BE7243D9.png" alt="C-SCAN" style="zoom:67%;">
+
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="Windows日志"><a href="#Windows日志" class="headerlink" title="Windows日志"></a>Windows日志</h2><p><em>Windows系统日志是记录系统中硬件、软件和系统问题的信息，同时还可以监视系统中发生的事件。可以用来检查错误发生的原因，或者寻找受到攻击时攻击者留下的痕迹。</em></p>
+<h3 id="日志特点"><a href="#日志特点" class="headerlink" title="日志特点"></a>日志特点</h3><ol>
+<li>系统内置的三个核心日志文件<u>（System，Security和Application）默认大小均为20MB</u>，记录事件数据超过20MB时，系统默认优先覆盖过期的日志记录。其它应用程序及服务日志默认最大为1MB，超过最大限制也优先覆盖过期的日志记录。</li>
+<li>Windwos操作系统默认没有提供删除特定日志记录的功能，仅提供了删除所有日志的操作功能。也就意味着日志记录ID（Event Record ID）应该是连续的，默认的排序方式应该是从大到小往下排列。</li>
+<li>可以“删除”单条日志，实质上是隐藏。</li>
+</ol>
+<h3 id="日志查看"><a href="#日志查看" class="headerlink" title="日志查看"></a>日志查看</h3><ul>
+<li>默认位置<code>C:/windows/System32/winevt/Logs</code> ，建议修改日志默认位置</li>
+<li>利用事件查看器查看日志：开始-&gt;运行-&gt;输入<code>eventvwr</code> -&gt;回车的方式快速打开该工具</li>
+</ul>
+<h3 id="日志分类"><a href="#日志分类" class="headerlink" title="日志分类"></a>日志分类</h3><p><em>Windows主要有以下三类日志记录系统事件：应用程序日志、系统日志和安全日志。</em></p>
+<ul>
+<li><strong>系统日志</strong>:记录主要包括驱动程序、系统组件和应用软件的崩溃以及数据丢失错误等。系统日志中记录的<u>时间类型由Windows NT/2000操作系统预先定义</u>。 默认位置： <code>%SystemRoot%\System32\Winevt\Logs\System.evtx</code></li>
+<li><strong>应用程序日志</strong>:包含由应用程序或系统程序记录的事件，<u>主要记录程序运行方面的事件</u>，例如数据库程序可以在应用程序日志中记录文件错误，默认位置：<code>%SystemRoot%\System32\Winevt\Logs\Application.evtx</code></li>
+<li><strong>安全日志</strong>:记录系统的安全审计事件，包含各种类型的登录日志、对象访问日志、进程追踪日志、特权使用、帐号管理、策略变更、系统事件。安全日志也是调查<strong>取证中最常用到的日志</strong>。默认位置：<code>%SystemRoot%\System32\Winevt\Logs\Security.evtx</code></li>
+<li>前两者存储着故障排除信息，对于系统管理员更为有用；<u>后者记录着事件审计信息，包括用户验证（登录、远程访问等）和特定用户在认证后对系统做了什么</u>，对于调查人员而言，更有帮助。  </li>
+</ul>
+<h3 id="日志安全设置"><a href="#日志安全设置" class="headerlink" title="日志安全设置"></a>日志安全设置</h3><ul>
+<li>设置系统默认日志属性，保留90天以上系统日志，可为日后系统故障排除故障、安全事故追查入侵者提供依据。</li>
+<li>Windows Server 2008 R2 系统的审核功能在默认状态下并没有启用 ，建议开启审核策略。</li>
+</ul>
+<h3 id="日志分析"><a href="#日志分析" class="headerlink" title="日志分析"></a>日志分析</h3><p><em>对于Windows事件日志分析，不同的EVENT ID代表了不同的意义，首要的过滤依据是EVENT ID</em></p>
+<p><strong>常见EVENT ID及其含义</strong>:</p>
+<ul>
+<li><img src="/2021/06/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/99.jpg" alt="登录事件"></li>
+<li>每个<strong>成功登录的事件都会标记一个登录类型</strong> ，不同登录类型代表不同的方式<ul>
+<li><img src="/2021/06/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/0d90ab95dda91cdbb25c20480478218fc398d9bd.jpg" alt="登陆类型"></li>
+</ul>
+</li>
+</ul>
+<h3 id="日志分析工具"><a href="#日志分析工具" class="headerlink" title="日志分析工具"></a>日志分析工具</h3><ol>
+<li><strong>Log Parser</strong></li>
+<li><strong>LogParser Lizard</strong></li>
+<li><strong>Event Log Explorer</strong></li>
+</ol>
+<h3 id="入侵情景分析"><a href="#入侵情景分析" class="headerlink" title="入侵情景分析"></a>入侵情景分析</h3><ol>
+<li><strong>BadUSB</strong><ul>
+<li>在一些近源渗透案例中，攻击者使用BadUSB对公司员工进行攻击，对这类攻击进行追踪需要<strong>着重关注硬件设备安装到系统中的时间</strong> ，展开追逐前，<u>确保审核策略已正确配置。</u></li>
+<li><img src="/2021/06/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/frr.jpg" alt="近源渗透"></li>
+</ul>
+</li>
+<li><strong>WIFI钓鱼</strong><ul>
+<li>在一些近源渗透案例中，攻击者使用WIFI伪造手段对办公区域进行钓鱼攻击，对这类攻击进行追踪需要<strong>着重分析系统访问过哪些关联的无线网络接入点及位置</strong>，<u>展开追逐前，确保审核策略已正确配置。</u></li>
+<li><img src="/2021/06/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/ki.jpg" alt="伪造wifi"></li>
+</ul>
+</li>
+<li><strong>勒索病毒</strong><ul>
+<li>在一些勒索病毒案例中，攻击者投放蠕虫病毒对局域网主机进行<strong>RDP(远程桌面)爆破</strong>，进而横向移动，对这类攻击进行追踪需要<strong>着重分析系统登陆事件</strong>，展开追逐前，确保审核策略已正确配置。</li>
+<li><img src="/2021/06/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/nm.jpg" alt="勒索病毒"></li>
+</ul>
+</li>
+</ol>
+<h1 id="MAC-OS基础"><a href="#MAC-OS基础" class="headerlink" title="MAC OS基础"></a>MAC OS基础</h1><h2 id="日志文件"><a href="#日志文件" class="headerlink" title="日志文件"></a>日志文件</h2><p><em>Mac日志文件是记录电脑系统应用程序和服务活动的文件，其后缀名为<code>.asl</code>，全名为Apple System Log。Mac日志文件按天存储，主要分为系统日志、安装器日志、无线连接日志、VPN连接日志、内核日志、诊断日志和电源管理日志7大类别，存储格式均为<code>.asl</code>。由于<u>Mac日志数据存储方式为二进制，在Window系统上并不能直接识别该文件</u>，需要对其中的asl日志文件结构进行解析。</em></p>
+<h2 id="日志查看-1"><a href="#日志查看-1" class="headerlink" title="日志查看"></a>日志查看</h2><ul>
+<li><pre><code class="php+HTML">系统日志文件夹 /var/log
+系统日志文件 /var/log/system.log
+Mac 分析数据 /var/log/DiagnosticMessages
+系统应用程序日志 /Library/Logs
+系统报告 /Library/Logs/DiagnosticReports
+用户应用程序日志 ~/Library/Logs
+用户报告 ~/Library/Logs/DiagnosticReports
+</code></pre>
+</li>
+<li><pre><code class="php+HTML">grep -nE “123|abc” app.log #查询日志文件app.log中包含 关键字 123 或 包含 关键字 abc 的行，显示行号
+grep -E -C5 “123” app.log #显示app.log中含有关键字&quot;123&quot;的行内容，以及之前之后的各5行内容
+grep -E “123” app.log #显示app.log中含有关键字&quot;123&quot;的行内容
+grep -i “magic” app.log  #不分大小写的搜索匹配magic。默认情况下是区分大小写的
+cat -n app.log | grep “error” --color #查询日志中含有某个关键字error的信息，显示行号，带颜色
+cat -n app.log |grep “error” | more #使用more和less命令分页查看日志，空格键翻页
+cat -n app.log |grep “error” &gt; temp.txt #把日志保存到文件
+</code></pre>
+</li>
+</ul>
+<h2 id="MAC文件系统"><a href="#MAC文件系统" class="headerlink" title="MAC文件系统"></a>MAC文件系统</h2><ul>
+<li>UFS:在 UFS 之前的文件系统最多只能使用 5% 的磁盘带宽，而 UFS 将这个数字提升到了 50%</li>
+<li>HFS+:<a target="_blank" rel="noopener" href="https://g3.luciaz.me/extdomains/zh.wikipedia.org/wiki/%E8%8B%B9%E6%9E%9C%E5%85%AC%E5%8F%B8">苹果公司</a>为替代他们的<a target="_blank" rel="noopener" href="https://g3.luciaz.me/extdomains/zh.wikipedia.org/wiki/%E5%88%86%E5%B1%82%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F">分层文件系统</a>（HFS）而开发的一种文件系统</li>
+<li>APFS:是一个适用于macOS、iOS、tvOS和watchOS的文件系统，目前正在由苹果公司开发和部署。它的目的是解决HFS+（Mac OS Extend，APFS的前身）文件系统的核心问题。APFS针对闪存和固态存储设备进行优化，具有写入时复制等设计特点，使用I/O合并改进性能                                                                                              </li>
+</ul>
+<h3 id="Mac文件目录"><a href="#Mac文件目录" class="headerlink" title="Mac文件目录"></a>Mac文件目录</h3><p><img src="https://img.linux.net.cn/data/attachment/album/201807/02/094428ko2tc8saplc2apto.png" alt="标准 Unix 文件系统"></p>
+<h3 id="Mac特有目录"><a href="#Mac特有目录" class="headerlink" title="Mac特有目录"></a>Mac特有目录</h3><ul>
+<li>/Applications 应用程序默认安装路径</li>
+<li>/Library 系统文件</li>
+<li>/Network 网络节点存放</li>
+<li>/System 只包含一个Library目录，存放了系统的绝大部分组件</li>
+<li>/Users 存放用户的数据</li>
+<li>/Volumes 存放挂载点</li>
+<li>/cores 内核转储文件存放目录。当一个进程崩溃时，如果系统允许则会产生转储文件。</li>
+<li>/private 存放了/tmp, /var, /etc等链接目录的目标目录。</li>
+</ul>
+<h3 id="Mac文件系统特点"><a href="#Mac文件系统特点" class="headerlink" title="Mac文件系统特点"></a>Mac文件系统特点</h3><p><strong>由域确定文件的放置</strong></p>
+<ul>
+<li>在 macOS 中，文件系统被<strong>分为多个域</strong>，<u>根据文件和资源的预期用途进行分离</u>。<ul>
+<li><strong>用户域</strong>包含特定于登录系统的用户的资源。虽然从技术上讲，它包含所有用户，但此域只反映<strong>当前用户在运行时的家庭目录</strong>。</li>
+<li><strong>本地域</strong>包含资源，例如当前计算机本地的应用程序，并共享给该计算机的所有用户。</li>
+<li><strong>网络域</strong>包含在<u>局域网络所有用户</u>之间共享的应用程序和文档等资源。</li>
+<li><strong>系统域</strong>包含由Apple安装的系统软件。系统域中的资源是系统运行所必需的。用户无法添加，删除或更改此域中的项目。</li>
+</ul>
+</li>
+</ul>
+<h2 id="Mac基本操作命令"><a href="#Mac基本操作命令" class="headerlink" title="Mac基本操作命令"></a>Mac基本操作命令</h2><h3 id="Mac用户管理命令"><a href="#Mac用户管理命令" class="headerlink" title="Mac用户管理命令"></a>Mac用户管理命令</h3><pre><code class="php+HTML">dscl . -list /Users #查看所有用户，仅显示用户名
+dscl . -list /Users UniqueID #查看所有用户对应的ID
+dscl . -read /Users/用户名 #查看指定用户的详细信息
+dscl . -list /Groups  用户组id #查看用户组
+dscl . -create /Users/kk UniqueID 888 #新建kk用户，id为888
+dscl . -passwd /Users/sz 1234 #修改kk用户的密码
+dscl . -delete /Users/kk #删除用户kk
+dscl . -create /Groups/组名 #新建组
+dscl . -append /Groups/组名 groupMembership kk #把kk添加到组
+dscl . -delete /Groups/组名 groupMembership kk #把kk从组删除
+dscl . -list /Groups GroupMembership #查看所有组下的用户
+</code></pre>
+<h1 id="移动智能设备操作系统"><a href="#移动智能设备操作系统" class="headerlink" title="移动智能设备操作系统"></a>移动智能设备操作系统</h1><h2 id="Android"><a href="#Android" class="headerlink" title="Android"></a>Android</h2><p>Android是基于Linux（不包含<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/GNU/671972">GNU</a>组件）的自由及开放源代码的操作系统</p>
+<h3 id="Android日志文件"><a href="#Android日志文件" class="headerlink" title="Android日志文件"></a>Android日志文件</h3><ul>
+<li><p>Android有四类日志文件，分别是：main, system, radio和events。</p>
+</li>
+<li><p>日志通过<code>/dev/log/main, /dev/log/system, /dev/log/radio, /dev/log/events</code> 四个设备文件来进行访问。</p>
+</li>
+<li><p><strong>main</strong>：应用程序日志<br><strong>system</strong>：系统日志<br><strong>radio</strong>：无线设备日志<br><strong>events</strong>：诊断系统问题日志</p>
+</li>
+</ul>
+<h4 id="Logger日志格式"><a href="#Logger日志格式" class="headerlink" title="Logger日志格式"></a>Logger日志格式</h4><p>main、system和radio三种类型的日志格式是相同的。日志格式如下所示：</p>
+<p><img src="https://pic1.zhimg.com/v2-a2f876631161fca1f52d5ae9910a18dc_b.jpg" alt="日志格式"></p>
+<ul>
+<li><strong>Priority</strong>：是一个整数，代表的是<strong>日志的优先级</strong>；<ul>
+<li>日志的优先级按重要程度不同划分为：<ul>
+<li>V-详细(Verbose，最低优先级)</li>
+<li>D-调试(Debug)</li>
+<li>I-信息(Info)</li>
+<li>W-警告(Warning)</li>
+<li>E-错误(Error)</li>
+<li>F-致命(Fatal)</li>
+<li>S-静默(Silent，最高优先级，但不打印任何内容)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>tag</strong>：是一个字符串，代表的是<strong>日志的标签</strong>；<br><strong>message</strong>：是一个字符串，代表的是<strong>日志的内容</strong>。</p>
+<p>events类型日志没有<strong>Priority</strong>标签</p>
+<h4 id="日志分析-1"><a href="#日志分析-1" class="headerlink" title="日志分析"></a>日志分析</h4><p><strong>Logcat</strong></p>
+<h2 id="Android文件系统"><a href="#Android文件系统" class="headerlink" title="Android文件系统"></a>Android文件系统</h2><h3 id="Ext4"><a href="#Ext4" class="headerlink" title="Ext4"></a>Ext4</h3><p>Android操作系统依托于Linux，所以主要的文件系统也是从Linux中发展而来，包括exFAT、ext3、ext4等，目前大多数手机仍使用Ext4。</p>
+<h3 id="F2FS"><a href="#F2FS" class="headerlink" title="F2FS"></a>F2FS</h3><p>F2FS “Flash Friendly File System”，<strong>一种专门为闪存而生的文件系统</strong>，其优势就是小文件的传输速率更快。近年来不断的有旗舰机采用这一文件系统。</p>
+<h3 id="Ext4-vs-F2FS"><a href="#Ext4-vs-F2FS" class="headerlink" title="Ext4 vs F2FS"></a>Ext4 vs F2FS</h3><ul>
+<li>F2FS 随机读写速度更快</li>
+<li>F2FS减少写的次数，延长固件寿命</li>
+<li>F2FS小文件读写速度更快，降低整理碎片开销</li>
+<li>Ext4 普及率更高，兼容性更好</li>
+<li>Ext 4 大文件读取远强于 F2FS</li>
+</ul>
+<h2 id="基本操作命令"><a href="#基本操作命令" class="headerlink" title="基本操作命令"></a>基本操作命令</h2><p><strong>adb</strong>:Android 调试桥</p>
+<pre><code class="php+HTML">adb shell  #进入Linuxshell模式
+adb shell command #执行单条Linux命令
+adb root #获取管理员权限
+adb pull &lt;远程路径&gt; &lt;本地路径&gt; #从设备上下载文件到电脑
+adb shell netcfg/ifconfig #显示ip
+</code></pre>
+<h2 id="IOS"><a href="#IOS" class="headerlink" title="IOS"></a>IOS</h2><p><em>iOS属于类Unix的操作系统</em></p>
+<h3 id="IOS日志文件"><a href="#IOS日志文件" class="headerlink" title="IOS日志文件"></a>IOS日志文件</h3><p><img src="/2021/06/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/1.png" alt="IOS日志文件"></p>
+<ul>
+<li>第一部分闪退进程的信息：<ul>
+<li><strong>Incident Identifie</strong>r ： 是崩溃报告的唯一标识符</li>
+<li><strong>CrashReporter Key</strong>： 是与设备标识相对应的唯一键值。根据大量机子的出现频率可以判断是否是一个普遍的问题</li>
+<li><strong>Hardware Model</strong> ：标识设备类型。 如果很多崩溃日志都是来自相同的设备类型，说明只在某特定类型的设备上有问题</li>
+<li><strong>Process</strong>：操作权限</li>
+<li><strong>Path</strong>:崩溃文件的路径</li>
+<li><strong>Identifier</strong>:项目标识符</li>
+<li><strong>Version</strong>:版本号</li>
+</ul>
+</li>
+<li>第二部分基本信息<ul>
+<li>这部分包括闪退发生的日期Date/Time和时间Launch Time，设备的iOS版本OS Version</li>
+</ul>
+</li>
+<li>第三部分异常信息</li>
+<li><strong>Exception Type</strong>:异常的类型</li>
+<li><strong>Exception Codes</strong> ：异常错误码</li>
+<li><strong>Termination Reason</strong>：闪退的原因</li>
+<li><strong>Triggered by Thread</strong>：出现问题的线程。首先确定在哪个线程中出了问题，其次再去定位。</li>
+</ul>
+<h3 id="基本操作命令-1"><a href="#基本操作命令-1" class="headerlink" title="基本操作命令"></a>基本操作命令</h3><p><em>Korn Shell(Unix Shell)</em></p>
+<pre><code class="php+HTML">w #显示当前系统活动的总信息
+df /tmp #显示文件系统的总空间和可用空间
+uname -a #显示系统全部信息
+</code></pre>
+<h3 id="IOS文件系统"><a href="#IOS文件系统" class="headerlink" title="IOS文件系统"></a>IOS文件系统</h3><p><u>APFS 是 macOS、iOS、手表和 tvOS 中的默认文件系统。</u></p>
+<p><strong>iOS 标准目录：文件所在的位置</strong></p>
+<ul>
+<li><p>出于安全目的，iOS 应用与文件系统的交互仅限于应用沙盒目录内的目录。</p>
+</li>
+<li><p>通常禁止应用在沙盒之外访问或创建文件</p>
+</li>
+<li><img src="/2021/06/06/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/ios_app_layout_2x.png" alt="沙盒" style="zoom:67%;">
+
+
+<ul>
+<li><strong>Documents</strong>:用户数据</li>
+<li><strong>Library</strong>:非用户数据，存储特定资源</li>
+<li><strong>Temp</strong>:临时文件,可能定时由系统清除</li>
+<li><strong>MyApp.app</strong>:应用程序的包</li>
+</ul>
+</li>
+</ul>
+
+      
+       <hr><span style="font-style: italic;color: gray;"> 转载请注明来源，欢迎对文章中的引用来源进行考证，欢迎指出任何有错误或不够清晰的表达。可以在下面评论区评论，也可以邮件至1694933467@qq.com </span>
+    </div>
+</article>
+
+
+
+
+
+
+
+    
+        <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="//cdn.jsdelivr.net/npm/mathjax@2.7.8/unpacked/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+<input type="hidden" id="MathJax-js"
+        value="//cdn.jsdelivr.net/npm/mathjax@2.7.8/unpacked/MathJax.js?config=TeX-MML-AM_CHTML">
+</input>
+    
+
+
+
+
+    </div>
+    <div class="copyright">
+        <p class="footer-entry">
+    ©2021-2023 WohCoOs
+</p>
+<p class="footer-entry">Built with <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/yelog/hexo-theme-3-hexo" target="_blank">3-hexo</a> theme</p>
+
+    </div>
+    <div class="full-toc">
+        <button class="full" data-title="切换全屏 快捷键 s"><span class="min "></span></button>
+<a class="" id="rocket" ></a>
+
+    </div>
+</div>
+
+</body>
+<script src="/js/jquery.pjax.js?v=1.1.0" ></script>
+
+<script src="/js/script.js?v=1.1.0" ></script>
+<script>
+    var img_resize = 'default';
+    function initArticle() {
+        /*渲染对应的表格样式*/
+        
+            $("#post .pjax table").addClass("green_title");
+        
+
+        /*渲染打赏样式*/
+        
+
+        /*高亮代码块行号*/
+        
+
+        /*访问数量*/
+        
+        $.getScript("//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js");
+        
+
+        /*代码高亮，行号对齐*/
+        $('.pre-numbering').css('line-height',$('.has-numbering').css('line-height'));
+
+        
+        
+    }
+
+    /*打赏页面隐藏与展示*/
+    
+
+</script>
+
+<!--加入行号的高亮代码块样式-->
+
+<!--自定义样式设置-->
+<style>
+    
+    
+    .nav {
+        width: 542px;
+    }
+    .nav.fullscreen {
+        margin-left: -542px;
+    }
+    .nav-left {
+        width: 120px;
+    }
+    
+    
+    @media screen and (max-width: 1468px) {
+        .nav {
+            width: 492px;
+        }
+        .nav.fullscreen {
+            margin-left: -492px;
+        }
+        .nav-left {
+            width: 100px;
+        }
+    }
+    
+    
+    @media screen and (max-width: 1024px) {
+        .nav {
+            width: 492px;
+            margin-left: -492px
+        }
+        .nav.fullscreen {
+            margin-left: 0;
+        }
+    }
+    
+    @media screen and (max-width: 426px) {
+        .nav {
+            width: 100%;
+        }
+        .nav-left {
+            width: 100%;
+        }
+    }
+    
+    
+    .nav-right .title-list nav a .post-title, .nav-right .title-list #local-search-result a .post-title {
+        color: #383636;
+    }
+    
+    
+    .nav-right .title-list nav a .post-date, .nav-right .title-list #local-search-result a .post-date {
+        color: #5e5e5f;
+    }
+    
+    
+    .nav-right nav a.hover, #local-search-result a.hover{
+        background-color: #e2e0e0;
+    }
+    
+    
+
+    /*列表样式*/
+    
+
+    /* 背景图样式 */
+    
+    
+
+
+    /*引用块样式*/
+    
+
+    /*文章列表背景图*/
+    
+
+    
+</style>
+
+
+
+
+
+
+
+</html>
