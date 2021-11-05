@@ -6,58 +6,15 @@
   <meta name="keywords" content="">
   <meta name="description" content="操作系统 | WohCoOs">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<meta name="description" content="Linux基础常用命令常用的系统命令1.pwd #当前位置 2.cd .. #返回上一级 3.cd + &#x2F;path&#x2F; #穿越到某个路径 4.cd - #上一个路径 5.ls + &#x2F;path&#x2F; #查看某文件夹下的内容 6.ls -l #当前文件夹里的文件信息（不包括子目录） 7.ls -lR #文件夹全部文件信息（包括子目录） 8.mkdir #新建文件夹 9.touch #建立文档 10.rm #">
 <meta property="og:type" content="article">
-<meta property="og:title" content="操作系统">
-<meta property="og:url" content="https://szszzszs13.github.io/2021/08/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/index.html">
+<meta property="og:title" content="网络技术基础">
+<meta property="og:url" content="https://szszzszs13.github.io/2021/09/14/%E7%BD%91%E7%BB%9C%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80/index.html">
 <meta property="og:site_name" content="WohCoOs">
-<meta property="og:description" content="Linux基础常用命令常用的系统命令1.pwd #当前位置 2.cd .. #返回上一级 3.cd + &#x2F;path&#x2F; #穿越到某个路径 4.cd - #上一个路径 5.ls + &#x2F;path&#x2F; #查看某文件夹下的内容 6.ls -l #当前文件夹里的文件信息（不包括子目录） 7.ls -lR #文件夹全部文件信息（包括子目录） 8.mkdir #新建文件夹 9.touch #建立文档 10.rm #">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://szszzszs13.github.io/2021/08/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/v2-212ca855ac2dad87983b23b6539e21ce_1440w.jpg">
-<meta property="og:image" content="https://szszzszs13.github.io/2021/08/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/v2-b92499b17ed11bc279689ecdb6efb4b6_b.jpg">
-<meta property="og:image" content="https://szszzszs13.github.io/2021/08/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/v2-b90ccc05d3a17b7bf30e4528faf96f4a_1440w.jpg">
-<meta property="og:image" content="https://szszzszs13.github.io/2021/08/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/v2-9d77e25913894df26b0374ceae25c605_b.jpg">
-<meta property="og:image" content="https://szszzszs13.github.io/2021/08/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/v2-d9e36f97b24b2a7f760a81d0b095c36d_b.jpg">
-<meta property="og:image" content="https://szszzszs13.github.io/2021/08/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/3.jpg">
-<meta property="og:image" content="https://pic2.zhimg.com/80/v2-151011877000bb57b29c0c86576a5691_1440w.jpg">
-<meta property="og:image" content="https://pic2.zhimg.com/80/v2-c6d908835871f938fe71c783b4cc8e01_1440w.jpg">
-<meta property="og:image" content="https://img-blog.csdnimg.cn/20190309112559820.png">
-<meta property="og:image" content="https://img-blog.csdnimg.cn/20190327075949591.png">
-<meta property="og:image" content="https://szszzszs13.github.io/2021/08/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/p.jpg">
-<meta property="og:image" content="https://szszzszs13.github.io/2021/08/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/1.jpg">
-<meta property="og:image" content="https://szszzszs13.github.io/2021/08/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/l.jpg">
-<meta property="og:image" content="https://szszzszs13.github.io/2021/08/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/x.jpg">
-<meta property="og:image" content="https://szszzszs13.github.io/2021/08/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/z.jpg">
-<meta property="og:image" content="https://szszzszs13.github.io/2021/08/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/20200315163724449.png">
-<meta property="og:image" content="https://szszzszs13.github.io/2021/08/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/20200315164109198.png">
-<meta property="og:image" content="https://szszzszs13.github.io/2021/08/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/20200315165047253.png">
-<meta property="og:image" content="https://szszzszs13.github.io/2021/08/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/20200315165313589.png">
-<meta property="og:image" content="https://szszzszs13.github.io/2021/08/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/20190804173223845.jpg">
-<meta property="og:image" content="https://szszzszs13.github.io/2021/08/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/v2-05897b729b9b931ec6d89c058ed2d403_1440w.png">
-<meta property="og:image" content="https://szszzszs13.github.io/2021/08/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/f.jpg">
-<meta property="og:image" content="https://szszzszs13.github.io/2021/08/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/v.jpg">
-<meta property="og:image" content="https://szszzszs13.github.io/2021/08/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/v2-f628cf410e6371bf18c5ba9afd64729b_1440w.jpg">
-<meta property="og:image" content="https://szszzszs13.github.io/2021/08/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/aHR0cHM6Ly91cGxvYWQtaW1hZ2VzLmppYW5zaHUuaW8vdXBsb2FkX2ltYWdlcy81ODUzMTU5LWFlNWYyNzU3ZTBhNGQwNjgucG5n.png">
-<meta property="og:image" content="https://szszzszs13.github.io/2021/08/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/202005252140571.png">
-<meta property="og:image" content="https://szszzszs13.github.io/2021/08/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/20200525214124568.png">
-<meta property="og:image" content="https://szszzszs13.github.io/2021/08/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/20200525214154186.png">
-<meta property="og:image" content="https://szszzszs13.github.io/2021/08/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/18464438-51a047178ff21028.jpg">
-<meta property="og:image" content="https://szszzszs13.github.io/2021/08/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/613861755_1618029572569_014AA794B8DE2B0593F9F6C4BE7243D9.png">
-<meta property="og:image" content="https://szszzszs13.github.io/2021/08/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/613861755_1618029572804_014AA794B8DE2B0593F9F6C4BE7243D9.png">
-<meta property="og:image" content="https://szszzszs13.github.io/2021/08/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/99.jpg">
-<meta property="og:image" content="https://szszzszs13.github.io/2021/08/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/0d90ab95dda91cdbb25c20480478218fc398d9bd.jpg">
-<meta property="og:image" content="https://szszzszs13.github.io/2021/08/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/frr.jpg">
-<meta property="og:image" content="https://szszzszs13.github.io/2021/08/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/ki.jpg">
-<meta property="og:image" content="https://szszzszs13.github.io/2021/08/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/nm.jpg">
-<meta property="og:image" content="https://img.linux.net.cn/data/attachment/album/201807/02/094428ko2tc8saplc2apto.png">
-<meta property="og:image" content="https://pic1.zhimg.com/v2-a2f876631161fca1f52d5ae9910a18dc_b.jpg">
-<meta property="og:image" content="https://szszzszs13.github.io/2021/08/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/1.png">
-<meta property="og:image" content="https://szszzszs13.github.io/2021/08/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/ios_app_layout_2x.png">
-<meta property="article:published_time" content="2021-08-24T06:26:23.000Z">
-<meta property="article:modified_time" content="2021-08-24T06:44:54.302Z">
+<meta property="article:published_time" content="2021-09-14T00:56:01.000Z">
+<meta property="article:modified_time" content="2021-09-14T00:57:22.392Z">
 <meta property="article:author" content="WohCoOs">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://szszzszs13.github.io/2021/08/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/v2-212ca855ac2dad87983b23b6539e21ce_1440w.jpg">
 
 
 <link rel="icon" href="/img/kudo.jpg">
@@ -143,7 +100,7 @@
     <li>
         <div class="all active" data-rel="全部文章">全部文章
             
-                <small>(6)</small>
+                <small>(9)</small>
             
         </div>
     </li>
@@ -161,8 +118,8 @@
         
     </div>
 </div>
-<input type="hidden" id="yelog_site_posts_number" value="6">
-<input type="hidden" id="yelog_site_word_count" value="16.8k">
+<input type="hidden" id="yelog_site_posts_number" value="9">
+<input type="hidden" id="yelog_site_word_count" value="22.9k">
 <div style="display: none">
     <span id="busuanzi_value_site_uv"></span>
     <span id="busuanzi_value_site_pv"></span>
@@ -215,6 +172,30 @@
     </div>
     
     <nav id="title-list-nav">
+        
+        <a  class="全部文章 "
+           href="/2021/11/05/1/"
+           data-tag=""
+           data-author="" >
+            <span class="post-title" title="1">1</span>
+            <span class="post-date" title="2021-11-05 23:22:02">2021/11/05</span>
+        </a>
+        
+        <a  class="全部文章 "
+           href="/2021/09/14/%E7%BD%91%E7%BB%9C%E6%8A%80%E6%9C%AF%E5%9F%BA%E7%A1%80/"
+           data-tag=""
+           data-author="" >
+            <span class="post-title" title="网络技术基础">网络技术基础</span>
+            <span class="post-date" title="2021-09-14 08:56:01">2021/09/14</span>
+        </a>
+        
+        <a  class="全部文章 "
+           href="/2021/09/13/hexo/"
+           data-tag=""
+           data-author="" >
+            <span class="post-title" title="hexo">hexo</span>
+            <span class="post-date" title="2021-09-13 23:12:04">2021/09/13</span>
+        </a>
         
         <a  class="全部文章 "
            href="/2021/08/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"
